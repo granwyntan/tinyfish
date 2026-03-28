@@ -434,7 +434,7 @@ async function runSourcesWithConcurrency(searchTerm, apiKey) {
   return finalizeResults(deduped);
 }
 
-export async function searchCatalog(searchTerm) {
+export async function searchCatalog(searchTerm, options = {}) {
   const normalizedSearch = normalizeKey(searchTerm);
   const catalog = readCatalog();
   const existing = catalog.queries.find(
@@ -445,7 +445,7 @@ export async function searchCatalog(searchTerm) {
     return { catalog, query: existing, fromCache: true };
   }
 
-  const apiKey = process.env.TINYFISH_API_KEY;
+  const apiKey = options.apiKey || process.env.TINYFISH_API_KEY;
 
   if (!apiKey) {
     throw new Error("Missing TINYFISH_API_KEY. Add it to .env.local before searching.");
@@ -476,7 +476,7 @@ export async function searchCatalog(searchTerm) {
   return { catalog: nextCatalog, query: nextQuery, fromCache: false };
 }
 
-export function tinyfishApiPlugin() {
+export function tinyfishApiPlugin(runtimeEnv = {}) {
   return {
     name: "tinyfish-api",
     configureServer(server) {
@@ -496,7 +496,9 @@ export function tinyfishApiPlugin() {
               return;
             }
 
-            const payload = await searchCatalog(searchTerm);
+            const payload = await searchCatalog(searchTerm, {
+              apiKey: runtimeEnv.TINYFISH_API_KEY
+            });
             sendJson(res, 200, payload);
           } catch (error) {
             sendJson(res, 500, {

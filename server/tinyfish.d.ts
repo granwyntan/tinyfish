@@ -1,3 +1,3 @@
 import type { Plugin } from "vite";
 
-export function tinyfishApiPlugin(): Plugin;
+export function tinyfishApiPlugin(runtimeEnv?: Record<string, string>): Plugin;
