@@ -47,6 +47,13 @@ function normalizeKey(value) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
+function normalizeText(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
 function roundMoney(value) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -83,6 +90,44 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+function getSignificantTokens(value) {
+  return normalizeText(value)
+    .split(" ")
+    .filter((token) => token.length >= 3 && !["with", "from", "pack", "for"].includes(token));
+}
+
+function isAccessoryQuery(searchTerm) {
+  return /\b(case|cover|bag|pouch|sleeve|protector|strap|cable|adapter)\b/i.test(searchTerm);
+}
+
+function isAccessoryResult(result) {
+  const title = normalizeText(result.product_name);
+  return /\b(case|cover|pouch|bag|sleeve|protector|holder|skin|shell|strap)\b/.test(title);
+}
+
+function isRelevantResult(searchTerm, result) {
+  const searchTokens = getSignificantTokens(searchTerm);
+  const titleTokens = new Set(getSignificantTokens(result.product_name));
+  const overlap = searchTokens.filter((token) => titleTokens.has(token)).length;
+  const numericTokens = searchTokens.filter((token) => /\d/.test(token));
+  const numericOverlap = numericTokens.filter((token) =>
+    Array.from(titleTokens).some(
+      (titleToken) => titleToken.includes(token) || token.includes(titleToken)
+    )
+  ).length;
+  const minimumOverlap = Math.max(2, Math.ceil(searchTokens.length * 0.45));
+
+  if (!isAccessoryQuery(searchTerm) && isAccessoryResult(result)) {
+    return false;
+  }
+
+  if (numericTokens.length > 0 && numericOverlap < numericTokens.length) {
+    return false;
+  }
+
+  return overlap >= Math.min(minimumOverlap, searchTokens.length);
+}
+
 function ensureCacheFile() {
   if (!existsSync(CACHE_FILE)) {
     mkdirSync(resolve(process.cwd(), "data"), { recursive: true });
@@ -103,9 +148,19 @@ function writeCatalog(catalog) {
 
 function sanitizeCatalog(catalog) {
   const queries = Array.isArray(catalog?.queries)
-    ? catalog.queries.filter(
-        (query) => Array.isArray(query?.results) && query.results.length > 0
-      )
+    ? catalog.queries
+        .map((query) => ({
+          ...query,
+          results: Array.isArray(query?.results)
+            ? query.results.filter(
+                (result) =>
+                  Number(result?.pricing?.landed_sgd?.total) > 0 &&
+                  Number(result?.pricing?.landed_sgd?.item_price) > 0 &&
+                  isRelevantResult(query.search_term, result)
+              )
+            : []
+        }))
+        .filter((query) => query.results.length > 0)
     : [];
 
   return {
@@ -463,7 +518,12 @@ async function runSourcesWithConcurrency(searchTerm, apiKey) {
 
   const deduped = Array.from(
     new Map(collected.map((item) => [item.listing_url || item.listing_id, item])).values()
-  ).filter((item) => item.media.product_image_url);
+  ).filter(
+    (item) =>
+      item.media.product_image_url &&
+      item.pricing.landed_sgd.total > 0 &&
+      item.pricing.landed_sgd.item_price > 0
+  );
 
   return finalizeResults(deduped);
 }
