@@ -1,0 +1,1654 @@
+{
+  "catalog_name": "Tinyfish Cached Marketplace Catalog",
+  "generated_at": "2026-03-28T14:05:00Z",
+  "supported_region": "Singapore",
+  "default_currency": "SGD",
+  "queries": [
+    {
+      "search_term": "Sony WH-1000XM5",
+      "search_aliases": [
+        "sony xm5 headphones",
+        "wireless noise cancelling headphones",
+        "sony wh1000xm5"
+      ],
+      "category": "Audio",
+      "search_description": "Premium over-ear ANC headphones compared across local and cross-border marketplaces for total landed cost into Singapore.",
+      "timestamp": "2026-03-28T13:20:00Z",
+      "results": [
+        {
+          "listing_id": "sony-xm5-shopee-sg-official",
+          "source": "Shopee SG",
+          "seller_name": "Sony Official Store",
+          "seller_badges": [
+            "Official Mall",
+            "Local Warranty",
+            "Fast Dispatch"
+          ],
+          "product_name": "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+          "category_path": [
+            "Electronics",
+            "Audio",
+            "Headphones"
+          ],
+          "condition": "Brand new",
+          "pricing": {
+            "original": {
+              "amount": 499,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 499,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 499
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": true,
+            "sentiment_score": 0.92,
+            "rating_out_of_5": 4.9,
+            "sold_count": 5100,
+            "rating_count": 3280
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Local courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 3,
+              "timing_label": "Fast",
+              "option_label": "Local courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 15,
+              "free_returns": true,
+              "warranty_type": "Official",
+              "warranty_summary": "1-year Sony Singapore warranty",
+              "warranty_months": 12
+            }
+          },
+          "content": {
+            "short_description": "Official local set with fast delivery, local warranty, and the strongest overall landed value.",
+            "detailed_description": "This listing is positioned as the safest mainstream choice for buyers who want the XM5 without import risk. It includes local warranty coverage, quick shipping from Singapore inventory, and no extra GST surprises after checkout.",
+            "review_summary": "Buyers consistently praise the active noise cancellation, long battery life, and lighter clamp force compared with older Sony models. A small group mentions that the glossy earcups can show fingerprints quickly.",
+            "best_for": "Commuters and office users who want a low-friction local purchase.",
+            "key_features": [
+              "Industry-leading active noise cancellation",
+              "Up to 30 hours of battery life",
+              "Multipoint Bluetooth device switching",
+              "Eight-microphone call clarity system"
+            ],
+            "included_in_box": [
+              "Sony WH-1000XM5 headphones",
+              "Hard-shell carrying case",
+              "USB-C charging cable",
+              "3.5 mm audio cable"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Shopee",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 499,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 1,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://shopee.sg/search?keyword=Sony%20WH-1000XM5%20Wireless%20Noise%20Canceling%20Headphones",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "sony-xm5-amazon-jp-import",
+          "source": "Amazon JP",
+          "seller_name": "Amazon Japan Export",
+          "seller_badges": [
+            "Cross-border",
+            "Prime Eligible"
+          ],
+          "product_name": "Sony WH-1000XM5 Wireless Headphones (Japan Import)",
+          "category_path": [
+            "Electronics",
+            "Audio",
+            "Headphones"
+          ],
+          "condition": "Brand new import set",
+          "pricing": {
+            "original": {
+              "amount": 51980,
+              "currency": "JPY"
+            },
+            "landed_sgd": {
+              "item_price": 457.9,
+              "shipping": 18.4,
+              "gst": 41.23,
+              "customs_duty": 0,
+              "total": 517.53
+            },
+            "fx_rate_to_sgd": 0.0088
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.94,
+            "rating_out_of_5": 4.8,
+            "sold_count": 1900,
+            "rating_count": 1092
+          },
+          "fulfillment": {
+            "ships_from_country": "Japan",
+            "shipping_method": "Air parcel",
+            "delivery": {
+              "min_days": 4,
+              "max_days": 6,
+              "timing_label": "Balanced",
+              "option_label": "Air parcel"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 10,
+              "free_returns": false,
+              "warranty_type": "Import",
+              "warranty_summary": "Seller-backed import warranty only",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Well-reviewed import set with strong pricing, but slightly slower delivery and weaker warranty coverage.",
+            "detailed_description": "This Japan-export listing lands slightly above the best local deal once shipping and GST are added, but it remains attractive because of its strong seller reputation and consistent buyer feedback. It works well for shoppers who are comfortable with a cross-border warranty arrangement.",
+            "review_summary": "Reviewers highlight authentic packaging, excellent audio performance, and cleaner pricing than some US imports. The main concern is that warranty support may require working through the seller instead of Sony Singapore.",
+            "best_for": "Buyers who care about review quality and do not mind an import workflow.",
+            "key_features": [
+              "Premium ANC tuned for travel and office use",
+              "Touch controls with wear detection",
+              "Comfort-focused lightweight design",
+              "LDAC support for higher-quality Bluetooth audio"
+            ],
+            "included_in_box": [
+              "Sony WH-1000XM5 headphones",
+              "Travel case",
+              "USB-C cable",
+              "3.5 mm cable"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Amazon",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Japan",
+            "market_region": "Japan",
+            "currency_of_origin": "JPY"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 517.53,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 2,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.amazon.co.jp/s?k=Sony%20WH-1000XM5%20Wireless%20Headphones%20(Japan%20Import)",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "sony-xm5-amazon-us",
+          "source": "Amazon US",
+          "seller_name": "Amazon US Electronics",
+          "seller_badges": [
+            "Global Store",
+            "High Volume Seller"
+          ],
+          "product_name": "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+          "category_path": [
+            "Electronics",
+            "Audio",
+            "Headphones"
+          ],
+          "condition": "Brand new export set",
+          "pricing": {
+            "original": {
+              "amount": 348,
+              "currency": "USD"
+            },
+            "landed_sgd": {
+              "item_price": 466.32,
+              "shipping": 25.1,
+              "gst": 44.23,
+              "customs_duty": 0,
+              "total": 535.65
+            },
+            "fx_rate_to_sgd": 1.34
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.88,
+            "rating_out_of_5": 4.7,
+            "sold_count": 2800,
+            "rating_count": 1640
+          },
+          "fulfillment": {
+            "ships_from_country": "United States",
+            "shipping_method": "Standard international",
+            "delivery": {
+              "min_days": 9,
+              "max_days": 11,
+              "timing_label": "Slow",
+              "option_label": "Standard international"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 30,
+              "free_returns": true,
+              "warranty_type": "Seller-backed",
+              "warranty_summary": "US market warranty; Singapore support not guaranteed",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Reliable export listing with generous return terms, but the landed cost is no longer competitive after shipping and tax.",
+            "detailed_description": "This listing looks attractive at sticker price, yet the landed total becomes meaningfully higher once international shipping and GST are included. It can still appeal to buyers who prioritize Amazon's return process over outright value.",
+            "review_summary": "Customers are happy with the soundstage, ANC strength, and comfort for long flights. Negative feedback is mostly around slower delivery and the weaker local warranty story compared with Singapore sets.",
+            "best_for": "Shoppers who trust Amazon's service more than marketplace stores.",
+            "key_features": [
+              "Adaptive noise cancellation",
+              "Quick charge support",
+              "Speak-to-chat and ambient modes",
+              "Premium microphone pickup for calls"
+            ],
+            "included_in_box": [
+              "Sony WH-1000XM5 headphones",
+              "Carrying case",
+              "USB-C cable",
+              "Audio cable"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Amazon",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "United States",
+            "market_region": "United States",
+            "currency_of_origin": "USD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 535.65,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 3,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.amazon.com/s?k=Sony%20WH-1000XM5%20Wireless%20Noise%20Canceling%20Headphones",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80"
+          }
+        }
+      ],
+      "vertical": "retail_commerce",
+      "search_intent": "Find the most worthwhile landed-cost offer in Singapore for Sony WH-1000XM5."
+    },
+    {
+      "search_term": "Apple iPhone 15 128GB",
+      "search_aliases": [
+        "iphone 15",
+        "apple smartphone 128gb",
+        "iphone 15 black"
+      ],
+      "category": "Smartphones",
+      "search_description": "Base-model iPhone 15 offers compared across official local stock, marketplace resellers, and cross-border imports.",
+      "timestamp": "2026-03-28T13:32:00Z",
+      "results": [
+        {
+          "listing_id": "iphone15-apple-sg",
+          "source": "Apple Store SG",
+          "seller_name": "Apple Online Store",
+          "seller_badges": [
+            "Official Store",
+            "AppleCare Eligible"
+          ],
+          "product_name": "Apple iPhone 15 128GB - Black",
+          "category_path": [
+            "Electronics",
+            "Phones",
+            "Smartphones"
+          ],
+          "condition": "Brand new",
+          "pricing": {
+            "original": {
+              "amount": 1129,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 1129,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 1129
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.95,
+            "rating_out_of_5": 4.9,
+            "sold_count": 2100,
+            "rating_count": 1720
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Apple scheduled delivery",
+            "delivery": {
+              "min_days": 2,
+              "max_days": 4,
+              "timing_label": "Balanced",
+              "option_label": "Apple scheduled delivery"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 14,
+              "free_returns": true,
+              "warranty_type": "Official",
+              "warranty_summary": "1-year Apple Singapore warranty",
+              "warranty_months": 12
+            }
+          },
+          "content": {
+            "short_description": "The cleanest and safest purchase path with guaranteed local support and predictable delivery.",
+            "detailed_description": "Apple's official listing is not the cheapest, but it is the benchmark for trust, warranty handling, and device authenticity. It is ideal for buyers who want a no-surprises transaction with easy access to AppleCare and direct after-sales support.",
+            "review_summary": "Buyers appreciate the polished iOS experience, excellent cameras, and strong battery endurance for the size. Common neutral feedback is that the price premium mainly buys peace of mind rather than extra accessories or discounts.",
+            "best_for": "Users who value warranty simplicity and direct Apple support.",
+            "key_features": [
+              "6.1-inch Super Retina XDR display",
+              "48 MP main camera with 2x telephoto option",
+              "USB-C connectivity",
+              "Dynamic Island and A16 Bionic chip"
+            ],
+            "included_in_box": [
+              "iPhone 15 handset",
+              "USB-C charge cable",
+              "Documentation"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Apple",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 1129,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 2,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.apple.com/sg/search/Apple%20iPhone%2015%20128GB%20-%20Black",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "iphone15-shopee-authorised",
+          "source": "Shopee SG",
+          "seller_name": "MobileHub Authorised",
+          "seller_badges": [
+            "Shopee Mall",
+            "Authorized Reseller",
+            "Installment Available"
+          ],
+          "product_name": "Apple iPhone 15 128GB Local Set",
+          "category_path": [
+            "Electronics",
+            "Phones",
+            "Smartphones"
+          ],
+          "condition": "Brand new local set",
+          "pricing": {
+            "original": {
+              "amount": 1088,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 1088,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 1088
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": true,
+            "sentiment_score": 0.91,
+            "rating_out_of_5": 4.8,
+            "sold_count": 3400,
+            "rating_count": 2015
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Same-island courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 3,
+              "timing_label": "Fast",
+              "option_label": "Same-island courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 7,
+              "free_returns": false,
+              "warranty_type": "Local seller",
+              "warranty_summary": "1-year local distributor warranty",
+              "warranty_months": 12
+            }
+          },
+          "content": {
+            "short_description": "Strong value listing for a local set, with faster shipping and a real discount below official pricing.",
+            "detailed_description": "This listing gives buyers a meaningful price cut while preserving the core benefits of a local set. It is a good fit for value-focused shoppers who still want quick shipping and straightforward local compatibility.",
+            "review_summary": "Most reviews praise sealed packaging, fast delivery, and responsive pre-sales answers. A few buyers mention that return handling is stricter than buying direct from Apple, which is typical for marketplace sellers.",
+            "best_for": "Shoppers hunting for the best local-market iPhone value.",
+            "key_features": [
+              "Unlocked Singapore local set",
+              "Solid camera performance for photo and video",
+              "Reliable battery life for daily use",
+              "Competitive local-market pricing"
+            ],
+            "included_in_box": [
+              "iPhone 15 handset",
+              "USB-C charge cable",
+              "Sealed documentation pack"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Shopee",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 1088,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 1,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://shopee.sg/search?keyword=Apple%20iPhone%2015%20128GB%20Local%20Set",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "iphone15-hk-import",
+          "source": "Parallel Import HK",
+          "seller_name": "Harbour Digital HK",
+          "seller_badges": [
+            "Grey Import",
+            "Dual Physical SIM Variant"
+          ],
+          "product_name": "Apple iPhone 15 128GB Hong Kong Set",
+          "category_path": [
+            "Electronics",
+            "Phones",
+            "Smartphones"
+          ],
+          "condition": "Brand new import set",
+          "pricing": {
+            "original": {
+              "amount": 6350,
+              "currency": "HKD"
+            },
+            "landed_sgd": {
+              "item_price": 1102.5,
+              "shipping": 14.5,
+              "gst": 100.53,
+              "customs_duty": 0,
+              "total": 1217.53
+            },
+            "fx_rate_to_sgd": 0.1736
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.84,
+            "rating_out_of_5": 4.6,
+            "sold_count": 620,
+            "rating_count": 244
+          },
+          "fulfillment": {
+            "ships_from_country": "Hong Kong",
+            "shipping_method": "Express courier",
+            "delivery": {
+              "min_days": 5,
+              "max_days": 7,
+              "timing_label": "Slow",
+              "option_label": "Express courier"
+            },
+            "availability": {
+              "status": "Limited stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 5,
+              "free_returns": false,
+              "warranty_type": "Official",
+              "warranty_summary": "Shop warranty only; Apple Singapore support may vary",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Niche import option mainly attractive for buyers specifically seeking the Hong Kong dual-physical-SIM variant.",
+            "detailed_description": "This listing is not cost-efficient once landed in Singapore, but it remains relevant because the Hong Kong model appeals to buyers who prefer two physical SIM slots. It should be treated as a specialty purchase rather than a value pick.",
+            "review_summary": "Satisfied buyers mention genuine devices and useful dual-SIM flexibility. Less positive reviews focus on the higher final cost and the weaker local support experience if any post-purchase issue appears.",
+            "best_for": "Users who specifically need the Hong Kong hardware variant.",
+            "key_features": [
+              "Dual physical SIM Hong Kong model",
+              "Factory unlocked",
+              "Same core hardware as standard iPhone 15",
+              "Good resale appeal for variant seekers"
+            ],
+            "included_in_box": [
+              "iPhone 15 handset",
+              "USB-C cable",
+              "Seller inspection seal and documents"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Parallel",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Hong Kong",
+            "market_region": "Hong Kong",
+            "currency_of_origin": "HKD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 1217.53,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 3,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.ebay.com/sch/i.html?_nkw=Apple%20iPhone%2015%20128GB%20Hong%20Kong%20Set",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80"
+          }
+        }
+      ],
+      "vertical": "retail_commerce",
+      "search_intent": "Find the most worthwhile landed-cost offer in Singapore for Apple iPhone 15 128GB."
+    },
+    {
+      "search_term": "Logitech MX Master 3S",
+      "search_aliases": [
+        "mx master 3s",
+        "logitech mouse",
+        "wireless productivity mouse"
+      ],
+      "category": "Productivity Accessories",
+      "search_description": "High-end productivity mouse listings compared across official channels and price-led marketplace sellers.",
+      "timestamp": "2026-03-28T13:41:00Z",
+      "results": [
+        {
+          "listing_id": "mxmaster3s-logitech-official",
+          "source": "Logitech SG",
+          "seller_name": "Logitech Official Store",
+          "seller_badges": [
+            "Official Store",
+            "2-Year Warranty"
+          ],
+          "product_name": "Logitech MX Master 3S Performance Wireless Mouse",
+          "category_path": [
+            "Computing",
+            "Accessories",
+            "Mouse"
+          ],
+          "condition": "Brand new",
+          "pricing": {
+            "original": {
+              "amount": 169,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 169,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 169
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.94,
+            "rating_out_of_5": 4.9,
+            "sold_count": 1800,
+            "rating_count": 1314
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Local courier",
+            "delivery": {
+              "min_days": 2,
+              "max_days": 4,
+              "timing_label": "Balanced",
+              "option_label": "Local courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 14,
+              "free_returns": true,
+              "warranty_type": "Official",
+              "warranty_summary": "2-year Logitech warranty",
+              "warranty_months": 24
+            }
+          },
+          "content": {
+            "short_description": "Premium official listing with the best warranty coverage and the strongest buyer confidence.",
+            "detailed_description": "The official store is priced above discount marketplace offers, but it gives buyers the cleanest warranty path and the lowest authenticity risk. It is especially compelling for professionals who depend on the mouse daily.",
+            "review_summary": "Users love the quiet clicks, ergonomic shape, and MagSpeed scrolling for spreadsheets and creative work. Some users with smaller hands mention that the mouse feels substantial, which is more a fit issue than a quality problem.",
+            "best_for": "Power users who want reliable long-term support.",
+            "key_features": [
+              "8K DPI sensor with glass tracking",
+              "Quiet click switches",
+              "MagSpeed electromagnetic scroll wheel",
+              "USB-C rechargeable battery"
+            ],
+            "included_in_box": [
+              "MX Master 3S mouse",
+              "Logi Bolt USB receiver",
+              "USB-C charging cable",
+              "Quick-start guide"
+            ]
+          },
+          "hero_image": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg",
+          "source_family": "Logitech",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 169,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 3,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.logitech.com/en-sg/search?q=Logitech%20MX%20Master%203S%20Performance%20Wireless%20Mouse",
+          "media": {
+            "product_image_url": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg"
+          }
+        },
+        {
+          "listing_id": "mxmaster3s-lazada-sg",
+          "source": "Lazada SG",
+          "seller_name": "GadgetHub Local",
+          "seller_badges": [
+            "LazMall",
+            "Same-Day Dispatch"
+          ],
+          "product_name": "Logitech MX Master 3S Wireless Mouse - Graphite",
+          "category_path": [
+            "Computing",
+            "Accessories",
+            "Mouse"
+          ],
+          "condition": "Brand new local stock",
+          "pricing": {
+            "original": {
+              "amount": 149,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 149,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 149
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": true,
+            "sentiment_score": 0.9,
+            "rating_out_of_5": 4.8,
+            "sold_count": 4200,
+            "rating_count": 2874
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Same-day courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 2,
+              "timing_label": "Fast",
+              "option_label": "Same-day courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 7,
+              "free_returns": false,
+              "warranty_type": "Seller-backed",
+              "warranty_summary": "1-year shop warranty",
+              "warranty_months": 12
+            }
+          },
+          "content": {
+            "short_description": "The best landed price in the set, plus very fast local delivery and strong sales momentum.",
+            "detailed_description": "This listing wins on value and convenience. It is the kind of offer that works well for buyers who already know the MX Master 3S is the right mouse and just want a fast, competitively priced local purchase.",
+            "review_summary": "Reviewers repeatedly mention fast fulfillment, authentic packaging, and a real productivity boost from the horizontal scroll wheel. The main tradeoff is shorter warranty coverage than the official store.",
+            "best_for": "Office workers and creators optimizing for value and speed.",
+            "key_features": [
+              "Ergonomic right-hand design",
+              "Horizontal thumb wheel",
+              "Multi-device switching",
+              "Fast local dispatch"
+            ],
+            "included_in_box": [
+              "MX Master 3S mouse",
+              "Logi Bolt receiver",
+              "Charging cable"
+            ]
+          },
+          "hero_image": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg",
+          "source_family": "Lazada",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 149,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 1,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.lazada.sg/catalog/?q=Logitech%20MX%20Master%203S%20Wireless%20Mouse%20-%20Graphite",
+          "media": {
+            "product_image_url": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg"
+          }
+        },
+        {
+          "listing_id": "mxmaster3s-amazon-us",
+          "source": "Amazon US",
+          "seller_name": "Amazon US Computing",
+          "seller_badges": [
+            "Global Store"
+          ],
+          "product_name": "Logitech MX Master 3S for Mac / PC - International Listing",
+          "category_path": [
+            "Computing",
+            "Accessories",
+            "Mouse"
+          ],
+          "condition": "Brand new export stock",
+          "pricing": {
+            "original": {
+              "amount": 99.99,
+              "currency": "USD"
+            },
+            "landed_sgd": {
+              "item_price": 133.98,
+              "shipping": 12.8,
+              "gst": 13.21,
+              "customs_duty": 0,
+              "total": 159.99
+            },
+            "fx_rate_to_sgd": 1.3399
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.89,
+            "rating_out_of_5": 4.7,
+            "sold_count": 2500,
+            "rating_count": 1491
+          },
+          "fulfillment": {
+            "ships_from_country": "United States",
+            "shipping_method": "Standard international",
+            "delivery": {
+              "min_days": 7,
+              "max_days": 9,
+              "timing_label": "Slow",
+              "option_label": "Standard international"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 30,
+              "free_returns": true,
+              "warranty_type": "Seller-backed",
+              "warranty_summary": "Marketplace return support; regional warranty may vary",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Decent export option on paper, but the landed total narrows most of the price advantage.",
+            "detailed_description": "This listing is useful as a benchmark because it shows how sticker price can understate the real cost once shipping and GST are included. It still appeals to buyers who prioritize Amazon's buyer protection and do not need immediate delivery.",
+            "review_summary": "The mouse itself earns excellent praise for comfort and productivity features. The weaker part of the experience is simply slower delivery and less certainty around warranty handling in Singapore.",
+            "best_for": "Buyers who prefer Amazon's platform protections over the lowest total.",
+            "key_features": [
+              "Strong office and creative workflow support",
+              "Quiet clicks",
+              "Long battery life",
+              "Broad Mac and Windows compatibility"
+            ],
+            "included_in_box": [
+              "MX Master 3S mouse",
+              "USB-C cable",
+              "Receiver"
+            ]
+          },
+          "hero_image": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg",
+          "source_family": "Amazon",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "United States",
+            "market_region": "United States",
+            "currency_of_origin": "USD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 159.99,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 2,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.amazon.com/s?k=Logitech%20MX%20Master%203S%20for%20Mac%20%2F%20PC%20-%20International%20Listing",
+          "media": {
+            "product_image_url": "https://resource.logitech.com/w_544%2Ch_544%2Car_1%2Cc_fill%2Cq_auto%2Cf_auto%2Cdpr_1.0/d_transparent.gif/content/dam/logitech/en/products/mice/mx-master-3s/migration-assets-for-delorean-2025/gallery/person-using-mx-master-3s-on-glass-surface-black.jpg"
+          }
+        }
+      ],
+      "vertical": "retail_commerce",
+      "search_intent": "Find the most worthwhile landed-cost offer in Singapore for Logitech MX Master 3S."
+    },
+    {
+      "search_term": "Nintendo Switch OLED",
+      "search_aliases": [
+        "switch oled",
+        "nintendo oled console",
+        "portable gaming console"
+      ],
+      "category": "Gaming",
+      "search_description": "Nintendo Switch OLED console offers compared across local retailers, marketplace stores, and import channels.",
+      "timestamp": "2026-03-28T13:48:00Z",
+      "results": [
+        {
+          "listing_id": "switch-oled-courts-sg",
+          "source": "Courts SG",
+          "seller_name": "Courts Singapore",
+          "seller_badges": [
+            "Authorized Retailer",
+            "Local Warranty"
+          ],
+          "product_name": "Nintendo Switch OLED Console - White Joy-Con",
+          "category_path": [
+            "Gaming",
+            "Consoles",
+            "Handheld"
+          ],
+          "condition": "Brand new local set",
+          "pricing": {
+            "original": {
+              "amount": 469,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 469,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 469
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.93,
+            "rating_out_of_5": 4.9,
+            "sold_count": 960,
+            "rating_count": 620
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Local courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 3,
+              "timing_label": "Fast",
+              "option_label": "Local courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 14,
+              "free_returns": true,
+              "warranty_type": "Local seller",
+              "warranty_summary": "1-year local retailer warranty",
+              "warranty_months": 12
+            }
+          },
+          "content": {
+            "short_description": "Reliable local retailer listing with clean warranty support and no hidden landed costs.",
+            "detailed_description": "This is the safe retail option for buyers who want a proper local invoice and easy after-sales handling. It does not chase the lowest possible price, but it keeps the experience predictable and beginner-friendly.",
+            "review_summary": "Customers praise the brighter OLED screen, strong handheld experience, and solid packaging condition. Comments about price are generally neutral because buyers understand they are paying for local convenience and warranty support.",
+            "best_for": "Families and first-time console buyers who want the least friction.",
+            "key_features": [
+              "7-inch OLED display",
+              "Improved kickstand",
+              "64 GB internal storage",
+              "Docked and handheld play modes"
+            ],
+            "included_in_box": [
+              "Switch OLED console",
+              "Dock",
+              "Joy-Con pair",
+              "Joy-Con grip",
+              "HDMI cable",
+              "AC adapter"
+            ]
+          },
+          "hero_image": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo",
+          "source_family": "Courts",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 469,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 2,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.courts.com.sg/catalogsearch/result/?q=Nintendo%20Switch%20OLED%20Console%20-%20White%20Joy-Con",
+          "media": {
+            "product_image_url": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo"
+          }
+        },
+        {
+          "listing_id": "switch-oled-shopee-sg",
+          "source": "Shopee SG",
+          "seller_name": "GameArena SG",
+          "seller_badges": [
+            "Shopee Mall",
+            "Fast Delivery"
+          ],
+          "product_name": "Nintendo Switch OLED Model Console Local Set",
+          "category_path": [
+            "Gaming",
+            "Consoles",
+            "Handheld"
+          ],
+          "condition": "Brand new local set",
+          "pricing": {
+            "original": {
+              "amount": 445,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 445,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 445
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": true,
+            "sentiment_score": 0.9,
+            "rating_out_of_5": 4.8,
+            "sold_count": 1820,
+            "rating_count": 1014
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Same-day courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 2,
+              "timing_label": "Fast",
+              "option_label": "Same-day courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 7,
+              "free_returns": false,
+              "warranty_type": "Local seller",
+              "warranty_summary": "Local shop warranty",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Best landed price among the Switch listings, with quick local dispatch and strong marketplace volume.",
+            "detailed_description": "This listing is the strongest value option if you want a local set at a sharper price. It keeps shipping fast and avoids import tax complexity, which matters more than sticker price differences for many buyers.",
+            "review_summary": "Reviews often mention clean packaging, fast delivery, and authentic local-stock units. The main caution from buyers is that shop-led return policies can be stricter than buying through a large retailer.",
+            "best_for": "Gamers who want the lowest local landed price without importing.",
+            "key_features": [
+              "OLED display upgrade over original Switch",
+              "Portable and TV play flexibility",
+              "Lower landed price than major retail chains",
+              "Very fast local delivery"
+            ],
+            "included_in_box": [
+              "Switch OLED console",
+              "Dock and cables",
+              "Joy-Con controllers",
+              "Joy-Con accessories"
+            ]
+          },
+          "hero_image": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo",
+          "source_family": "Shopee",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 445,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 1,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://shopee.sg/search?keyword=Nintendo%20Switch%20OLED%20Model%20Console%20Local%20Set",
+          "media": {
+            "product_image_url": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo"
+          }
+        },
+        {
+          "listing_id": "switch-oled-playasia",
+          "source": "Play-Asia",
+          "seller_name": "Play-Asia Export",
+          "seller_badges": [
+            "Import Specialist"
+          ],
+          "product_name": "Nintendo Switch OLED Console International Set",
+          "category_path": [
+            "Gaming",
+            "Consoles",
+            "Handheld"
+          ],
+          "condition": "Brand new import set",
+          "pricing": {
+            "original": {
+              "amount": 319.99,
+              "currency": "USD"
+            },
+            "landed_sgd": {
+              "item_price": 428.79,
+              "shipping": 22.5,
+              "gst": 40.62,
+              "customs_duty": 0,
+              "total": 491.91
+            },
+            "fx_rate_to_sgd": 1.34
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.87,
+            "rating_out_of_5": 4.7,
+            "sold_count": 540,
+            "rating_count": 216
+          },
+          "fulfillment": {
+            "ships_from_country": "Hong Kong",
+            "shipping_method": "International express",
+            "delivery": {
+              "min_days": 8,
+              "max_days": 10,
+              "timing_label": "Slow",
+              "option_label": "International express"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 7,
+              "free_returns": false,
+              "warranty_type": "Import",
+              "warranty_summary": "Seller-backed import support",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Specialist import listing that is easy to consider until the full landed cost is calculated.",
+            "detailed_description": "This import option demonstrates why a price comparison platform should rank by total cost rather than sticker price alone. It looks cheaper at first glance, but the landed total ends up above local-market deals after shipping and GST.",
+            "review_summary": "Customers generally trust the seller and receive authentic consoles, but slower delivery and weaker warranty coverage reduce its appeal versus local stock.",
+            "best_for": "Collectors or import buyers who prefer a specialist export retailer.",
+            "key_features": [
+              "Region-flexible Nintendo hardware",
+              "Authentic boxed console",
+              "Good benchmark for landed-cost comparison",
+              "Access to some bundle variants not always sold locally"
+            ],
+            "included_in_box": [
+              "Switch OLED console set",
+              "Dock",
+              "Joy-Con pair",
+              "Power adapter",
+              "HDMI cable"
+            ]
+          },
+          "hero_image": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo",
+          "source_family": "Play-Asia",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Hong Kong",
+            "market_region": "Hong Kong",
+            "currency_of_origin": "USD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 491.91,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 3,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.play-asia.com/search/Nintendo+Switch+OLED+Console+International+Set",
+          "media": {
+            "product_image_url": "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill%2Cw_300/ncom/en_US/switch/site-design-update/hardware-hero-combo"
+          }
+        }
+      ],
+      "vertical": "retail_commerce",
+      "search_intent": "Find the most worthwhile landed-cost offer in Singapore for Nintendo Switch OLED."
+    },
+    {
+      "search_term": "Dyson Supersonic Hair Dryer",
+      "search_aliases": [
+        "dyson hair dryer",
+        "supersonic dryer",
+        "premium hair dryer"
+      ],
+      "category": "Beauty Tech",
+      "search_description": "Premium hair dryer listings compared across official and marketplace channels for buyers who care about warranty, attachments, and final landed price.",
+      "timestamp": "2026-03-28T13:56:00Z",
+      "results": [
+        {
+          "listing_id": "dyson-supersonic-official-sg",
+          "source": "Dyson SG",
+          "seller_name": "Dyson Official Store",
+          "seller_badges": [
+            "Official Store",
+            "2-Year Warranty"
+          ],
+          "product_name": "Dyson Supersonic Hair Dryer - Nickel/Copper",
+          "category_path": [
+            "Home",
+            "Beauty",
+            "Hair Care"
+          ],
+          "condition": "Brand new",
+          "pricing": {
+            "original": {
+              "amount": 699,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 699,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 699
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.94,
+            "rating_out_of_5": 4.9,
+            "sold_count": 870,
+            "rating_count": 711
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Local courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 3,
+              "timing_label": "Fast",
+              "option_label": "Local courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 15,
+              "free_returns": true,
+              "warranty_type": "Official",
+              "warranty_summary": "2-year Dyson Singapore warranty",
+              "warranty_months": 24
+            }
+          },
+          "content": {
+            "short_description": "Most expensive option in the set, but also the cleanest choice for attachment completeness and warranty confidence.",
+            "detailed_description": "The official listing gives buyers maximum certainty around attachment compatibility, warranty support, and product authenticity. It is best viewed as the premium low-risk option rather than the value pick.",
+            "review_summary": "Customers praise the faster drying time, lower heat damage feel, and strong build quality. The most common hesitation is simply the premium price rather than the product performance itself.",
+            "best_for": "Users who want the safest premium purchase with full official support.",
+            "key_features": [
+              "Intelligent heat control",
+              "Fast digital motor airflow",
+              "Magnetic styling attachments",
+              "Lower heat exposure than conventional dryers"
+            ],
+            "included_in_box": [
+              "Dyson Supersonic dryer",
+              "Styling concentrator",
+              "Flyaway attachment",
+              "Gentle air attachment",
+              "Diffuser"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Dyson",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 699,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 3,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.dyson.com.sg/search?search=Dyson%20Supersonic%20Hair%20Dryer%20-%20Nickel%2FCopper",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "dyson-supersonic-lazada-sg",
+          "source": "Lazada SG",
+          "seller_name": "Dyson Flagship on LazMall",
+          "seller_badges": [
+            "LazMall",
+            "Official Flagship",
+            "Voucher Eligible"
+          ],
+          "product_name": "Dyson Supersonic Hair Dryer Official Flagship Listing",
+          "category_path": [
+            "Home",
+            "Beauty",
+            "Hair Care"
+          ],
+          "condition": "Brand new",
+          "pricing": {
+            "original": {
+              "amount": 659,
+              "currency": "SGD"
+            },
+            "landed_sgd": {
+              "item_price": 659,
+              "shipping": 0,
+              "gst": 0,
+              "customs_duty": 0,
+              "total": 659
+            },
+            "fx_rate_to_sgd": 1
+          },
+          "metrics": {
+            "is_cheapest": true,
+            "sentiment_score": 0.92,
+            "rating_out_of_5": 4.8,
+            "sold_count": 1260,
+            "rating_count": 944
+          },
+          "fulfillment": {
+            "ships_from_country": "Singapore",
+            "shipping_method": "Local courier",
+            "delivery": {
+              "min_days": 1,
+              "max_days": 3,
+              "timing_label": "Fast",
+              "option_label": "Local courier"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": true,
+              "stock_notes": "Ships from local Singapore inventory."
+            },
+            "commercial_terms": {
+              "return_window_days": 7,
+              "free_returns": true,
+              "warranty_type": "Official",
+              "warranty_summary": "Official local warranty",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Best landed price in the Dyson set while still retaining official-channel credibility.",
+            "detailed_description": "This listing combines official-channel trust with a sharper marketplace price, making it the sweet spot in the dataset. It is the strongest all-round option for buyers who want authentic stock without paying top official-store pricing.",
+            "review_summary": "Reviewers are happy with fast delivery, authentic packaging, and noticeable improvements in drying time and hair finish. Some note that bundles can vary, so the attachment list should always be checked before buying.",
+            "best_for": "Buyers who want an official Dyson purchase at a more competitive price.",
+            "key_features": [
+              "Official flagship marketplace listing",
+              "Competitive local pricing",
+              "Fast Singapore shipping",
+              "Premium finish and attachment system"
+            ],
+            "included_in_box": [
+              "Dyson Supersonic dryer",
+              "Selected styling attachments",
+              "Documentation"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Lazada",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Singapore",
+            "market_region": "Singapore",
+            "currency_of_origin": "SGD"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 659,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 2,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.lazada.sg/catalog/?q=Dyson%20Supersonic%20Hair%20Dryer%20Official%20Flagship%20Listing",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80"
+          }
+        },
+        {
+          "listing_id": "dyson-supersonic-amazon-jp",
+          "source": "Amazon JP",
+          "seller_name": "Amazon Japan Beauty",
+          "seller_badges": [
+            "Cross-border",
+            "Prime Eligible"
+          ],
+          "product_name": "Dyson Supersonic Hair Dryer Japan Import Set",
+          "category_path": [
+            "Home",
+            "Beauty",
+            "Hair Care"
+          ],
+          "condition": "Brand new import set",
+          "pricing": {
+            "original": {
+              "amount": 52500,
+              "currency": "JPY"
+            },
+            "landed_sgd": {
+              "item_price": 462.1,
+              "shipping": 26.3,
+              "gst": 43.96,
+              "customs_duty": 0,
+              "total": 532.36
+            },
+            "fx_rate_to_sgd": 0.0088
+          },
+          "metrics": {
+            "is_cheapest": false,
+            "sentiment_score": 0.86,
+            "rating_out_of_5": 4.7,
+            "sold_count": 430,
+            "rating_count": 188
+          },
+          "fulfillment": {
+            "ships_from_country": "Japan",
+            "shipping_method": "Air parcel",
+            "delivery": {
+              "min_days": 6,
+              "max_days": 8,
+              "timing_label": "Slow",
+              "option_label": "Air parcel"
+            },
+            "availability": {
+              "status": "In stock",
+              "local_stock": false,
+              "stock_notes": "Cross-border fulfillment may introduce customs and transit variability."
+            },
+            "commercial_terms": {
+              "return_window_days": 10,
+              "free_returns": false,
+              "warranty_type": "Import",
+              "warranty_summary": "Import warranty only; plug compatibility should be checked",
+              "warranty_months": 6
+            }
+          },
+          "content": {
+            "short_description": "Very attractive sticker price that becomes more nuanced once import considerations and compatibility checks are included.",
+            "detailed_description": "This import listing is useful because it shows the value of a richer JSON schema: the price is strong, but buyers also need context around plug standards, attachment differences, and warranty limitations. The final landed price is good, though not automatically the best choice for every buyer.",
+            "review_summary": "Positive reviews focus on genuine product quality and lower entry cost than local retail. The weaker feedback concerns import warranty handling and the need to confirm voltage or plug requirements before purchase.",
+            "best_for": "Experienced shoppers comfortable with import tradeoffs.",
+            "key_features": [
+              "Competitive import pricing",
+              "Dyson drying performance at lower sticker price",
+              "Useful benchmark against local official listings",
+              "Potential variant differences worth checking"
+            ],
+            "included_in_box": [
+              "Dyson Supersonic dryer",
+              "Japan-market attachment set",
+              "Documentation"
+            ]
+          },
+          "hero_image": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80",
+          "source_family": "Amazon",
+          "vertical": "retail_commerce",
+          "origin": {
+            "country_of_origin": "Japan",
+            "market_region": "Japan",
+            "currency_of_origin": "JPY"
+          },
+          "comparison": {
+            "price_per_unit_sgd": 532.36,
+            "comparison_unit_label": "per item",
+            "units_in_listing": 1,
+            "worth_it_score": 99,
+            "value_band": "Excellent value",
+            "landed_cost_rank": 1,
+            "rationale_summary": "Excellent value: combines landed price, delivery speed, review quality, and warranty confidence."
+          },
+          "listing_url": "https://www.amazon.co.jp/s?k=Dyson%20Supersonic%20Hair%20Dryer%20Japan%20Import%20Set",
+          "media": {
+            "product_image_url": "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=80"
+          }
+        }
+      ],
+      "vertical": "retail_commerce",
+      "search_intent": "Find the most worthwhile landed-cost offer in Singapore for Dyson Supersonic Hair Dryer."
+    }
+  ],
+  "engine_context": {
+    "target_market": "Singapore",
+    "gst_rate_percent": 9,
+    "landed_cost_formula": "((P x FX) + S + D) x (1 + GST)",
+    "calculation_notes": [
+      "Singapore low-value goods imported by air or post are modeled with 9% GST.",
+      "Electronics usually carry zero customs duty in this mock catalog unless stated otherwise.",
+      "Rankings are based on landed total, review quality, delivery timing, warranty strength, and local-stock confidence."
+    ],
+    "source_targets": {
+      "retail": [
+        {
+          "name": "Shopee SG",
+          "url": "https://shopee.sg"
+        },
+        {
+          "name": "Lazada SG",
+          "url": "https://www.lazada.sg"
+        },
+        {
+          "name": "Amazon SG",
+          "url": "https://www.amazon.sg"
+        },
+        {
+          "name": "Carousell SG",
+          "url": "https://www.carousell.sg"
+        },
+        {
+          "name": "Zalora SG",
+          "url": "https://www.zalora.sg"
+        },
+        {
+          "name": "FairPrice SG",
+          "url": "https://www.fairprice.com.sg"
+        },
+        {
+          "name": "RedMart",
+          "url": "https://redmart.lazada.sg"
+        },
+        {
+          "name": "Sephora SG",
+          "url": "https://www.sephora.sg"
+        },
+        {
+          "name": "Decathlon SG",
+          "url": "https://www.decathlon.sg"
+        },
+        {
+          "name": "Courts SG",
+          "url": "https://www.courts.com.sg"
+        },
+        {
+          "name": "Amazon US",
+          "url": "https://www.amazon.com"
+        },
+        {
+          "name": "AliExpress",
+          "url": "https://www.aliexpress.com"
+        },
+        {
+          "name": "Taobao",
+          "url": "https://world.taobao.com"
+        },
+        {
+          "name": "eBay",
+          "url": "https://www.ebay.com"
+        },
+        {
+          "name": "Walmart",
+          "url": "https://www.walmart.com"
+        }
+      ],
+      "travel": [
+        {
+          "name": "Skyscanner",
+          "url": "https://www.skyscanner.com"
+        },
+        {
+          "name": "Trip.com",
+          "url": "https://www.trip.com"
+        },
+        {
+          "name": "Booking.com",
+          "url": "https://www.booking.com"
+        }
+      ]
+    },
+    "supported_origin_markets": [
+      "SG",
+      "CN",
+      "JP",
+      "KR",
+      "VN",
+      "ID",
+      "IN",
+      "MY",
+      "US",
+      "EU",
+      "AU",
+      "NZ",
+      "HK"
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: #f7f5ef;
+  background:
+    radial-gradient(circle at top left, rgba(240, 186, 109, 0.1), transparent 28%),
+    linear-gradient(180deg, #09161b 0%, #0b1c23 40%, #09161b 100%);
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(240, 186, 109, 0.1), transparent 28%),
+    linear-gradient(180deg, #09161b 0%, #0b1c23 40%, #09161b 100%);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(240, 186, 109, 0.1), transparent 28%),
+    linear-gradient(180deg, #09161b 0%, #0b1c23 40%, #09161b 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.range-thumb {
+  pointer-events: none;
+}
+
+.range-thumb::-webkit-slider-runnable-track {
+  height: 0;
+  background: transparent;
+}
+
+.range-thumb::-moz-range-track {
+  height: 0;
+  background: transparent;
+}
+
+.range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  height: 18px;
+  width: 18px;
+  border: 2px solid #09161b;
+  border-radius: 999px;
+  background: #f7f5ef;
+  box-shadow: 0 0 0 4px rgba(240, 186, 109, 0.18);
+  -webkit-appearance: none;
+}
+
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 18px;
+  width: 18px;
+  border: 2px solid #09161b;
+  border-radius: 999px;
+  background: #f7f5ef;
+  box-shadow: 0 0 0 4px rgba(240, 186, 109, 0.18);
+}
+
+.surface-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.surface-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.surface-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+::selection {
+  background: rgba(240, 186, 109, 0.35);
+  color: white;
+}
