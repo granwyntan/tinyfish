@@ -6,14 +6,26 @@ interface TinyfishSearchPayload {
   fromCache: boolean;
 }
 
-export async function fetchCatalog() {
-  const response = await fetch("/api/tinyfish/catalog");
+async function parseJsonResponse(response: Response) {
+  const contentType = response.headers.get("content-type") || "";
+  const text = await response.text();
 
   if (!response.ok) {
-    throw new Error("Failed to load Tinyfish catalog cache.");
+    throw new Error(text || `Request failed with status ${response.status}`);
   }
 
-  return (await response.json()) as MarketplaceCatalog;
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Expected JSON response but received: ${text.slice(0, 160) || "empty response"}`
+    );
+  }
+
+  return JSON.parse(text);
+}
+
+export async function fetchCatalog() {
+  const response = await fetch("/api/tinyfish/catalog");
+  return (await parseJsonResponse(response)) as MarketplaceCatalog;
 }
 
 export async function searchCatalog(searchTerm: string) {
@@ -25,7 +37,9 @@ export async function searchCatalog(searchTerm: string) {
     body: JSON.stringify({ searchTerm })
   });
 
-  const payload = (await response.json()) as TinyfishSearchPayload | { error: string };
+  const payload = (await parseJsonResponse(response)) as
+    | TinyfishSearchPayload
+    | { error: string };
 
   if (!response.ok || "error" in payload) {
     throw new Error("error" in payload ? payload.error : "Tinyfish search failed.");

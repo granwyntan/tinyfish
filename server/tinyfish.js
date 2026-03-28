@@ -136,14 +136,18 @@ function ensureCacheFile() {
   }
 }
 
-function readCatalog() {
+export function readCatalog() {
   ensureCacheFile();
   return sanitizeCatalog(JSON.parse(readFileSync(CACHE_FILE, "utf8")));
 }
 
 function writeCatalog(catalog) {
   ensureCacheFile();
-  writeFileSync(CACHE_FILE, JSON.stringify(sanitizeCatalog(catalog), null, 2) + "\n");
+  try {
+    writeFileSync(CACHE_FILE, JSON.stringify(sanitizeCatalog(catalog), null, 2) + "\n");
+  } catch (error) {
+    console.warn("[tinyfish] cache write skipped:", error);
+  }
 }
 
 function sanitizeCatalog(catalog) {
@@ -231,7 +235,71 @@ function buildGoal(searchTerm, source) {
   ].join(" ");
 }
 
-async function runTinyfishAutomation(searchTerm, source, apiKey) {
+async function runTinyfishAutomationWithFetch(searchTerm, source, apiKey) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SITE_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(API_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-Key": apiKey
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        url: source.url,
+        goal: buildGoal(searchTerm, source)
+      })
+    });
+
+    if (!response.ok || !response.body) {
+      throw new Error(`Tinyfish request failed for ${source.name}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+
+      const blocks = buffer.split(/\r?\n\r?\n/);
+      buffer = blocks.pop() ?? "";
+
+      for (const block of blocks) {
+        const dataLine = block
+          .split(/\r?\n/)
+          .find((line) => line.startsWith("data: "));
+
+        if (!dataLine) {
+          continue;
+        }
+
+        const payload = JSON.parse(dataLine.slice(6));
+
+        if (payload.type === "COMPLETE") {
+          return payload.result;
+        }
+
+        if (payload.type === "FAILED") {
+          throw new Error(payload.error || `Tinyfish search failed for ${source.name}`);
+        }
+      }
+
+      if (done) {
+        break;
+      }
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  throw new Error(`Tinyfish stream ended before completion for ${source.name}`);
+}
+
+async function runTinyfishAutomationWithCurl(searchTerm, source, apiKey) {
   const body = JSON.stringify({
     url: source.url,
     goal: buildGoal(searchTerm, source)
@@ -243,6 +311,7 @@ async function runTinyfishAutomation(searchTerm, source, apiKey) {
       [
         "--max-time",
         String(Math.ceil(SITE_TIMEOUT_MS / 1000)),
+        "-k",
         "-N",
         "-sS",
         "-X",
@@ -308,6 +377,18 @@ async function runTinyfishAutomation(searchTerm, source, apiKey) {
   }
 
   throw new Error(`Tinyfish stream ended before completion for ${source.name}`);
+}
+
+async function runTinyfishAutomation(searchTerm, source, apiKey) {
+  try {
+    return await runTinyfishAutomationWithFetch(searchTerm, source, apiKey);
+  } catch (error) {
+    if (process.platform === "win32") {
+      return runTinyfishAutomationWithCurl(searchTerm, source, apiKey);
+    }
+
+    throw error;
+  }
 }
 
 function inferCategory(searchTerm) {
