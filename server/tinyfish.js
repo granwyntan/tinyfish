@@ -6,6 +6,7 @@ const CACHE_FILE = resolve(process.cwd(), "data/tinyfish-cache.json");
 const FALLBACK_FILE = resolve(process.cwd(), "src/data/mockCatalog.json");
 const MAX_RESULTS_PER_SITE = 6;
 const CONCURRENCY = 4;
+const SITE_TIMEOUT_MS = 65000;
 
 const TARGET_SITES = [
   { name: "Shopee SG", url: "https://shopee.sg", origin: "Singapore", currency: "SGD" },
@@ -162,17 +163,20 @@ function buildGoal(searchTerm, source) {
 }
 
 async function runTinyfishAutomation(searchTerm, source, apiKey) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SITE_TIMEOUT_MS);
   const response = await fetch(API_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "X-API-Key": apiKey
     },
+    signal: controller.signal,
     body: JSON.stringify({
       url: source.url,
       goal: buildGoal(searchTerm, source)
     })
-  });
+  }).finally(() => clearTimeout(timeout));
 
   if (!response.ok || !response.body) {
     throw new Error(`Tinyfish request failed for ${source.name}`);
