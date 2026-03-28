@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { spawn } from "node:child_process";
 
 const API_ENDPOINT = "https://agent.tinyfish.ai/v1/automation/run-sse";
 const CACHE_FILE = resolve(process.cwd(), "data/tinyfish-cache.json");
@@ -163,58 +164,78 @@ function buildGoal(searchTerm, source) {
 }
 
 async function runTinyfishAutomation(searchTerm, source, apiKey) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), SITE_TIMEOUT_MS);
-  const response = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": apiKey
-    },
-    signal: controller.signal,
-    body: JSON.stringify({
-      url: source.url,
-      goal: buildGoal(searchTerm, source)
-    })
-  }).finally(() => clearTimeout(timeout));
+  const body = JSON.stringify({
+    url: source.url,
+    goal: buildGoal(searchTerm, source)
+  });
 
-  if (!response.ok || !response.body) {
-    throw new Error(`Tinyfish request failed for ${source.name}`);
-  }
+  const output = await new Promise((resolveOutput, rejectOutput) => {
+    const child = spawn(
+      "curl.exe",
+      [
+        "--max-time",
+        String(Math.ceil(SITE_TIMEOUT_MS / 1000)),
+        "-N",
+        "-sS",
+        "-X",
+        "POST",
+        API_ENDPOINT,
+        "-H",
+        `X-API-Key: ${apiKey}`,
+        "-H",
+        "Content-Type: application/json",
+        "-d",
+        body
+      ],
+      {
+        stdio: ["ignore", "pipe", "pipe"]
+      }
+    );
 
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
+    let stdout = "";
+    let stderr = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
 
-    const blocks = buffer.split(/\r?\n\r?\n/);
-    buffer = blocks.pop() ?? "";
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
 
-    for (const block of blocks) {
-      const dataLine = block
-        .split(/\r?\n/)
-        .find((line) => line.startsWith("data: "));
+    child.on("error", rejectOutput);
 
-      if (!dataLine) {
-        continue;
+    child.on("close", (code) => {
+      if (code !== 0 && !stdout.includes('"type":"COMPLETE"')) {
+        rejectOutput(
+          new Error(stderr.trim() || `Tinyfish curl request failed for ${source.name}`)
+        );
+        return;
       }
 
-      const payload = JSON.parse(dataLine.slice(6));
+      resolveOutput(stdout);
+    });
+  });
 
-      if (payload.type === "COMPLETE") {
-        return payload.result;
-      }
+  const blocks = String(output).split(/\r?\n\r?\n/);
 
-      if (payload.type === "FAILED") {
-        throw new Error(payload.error || `Tinyfish search failed for ${source.name}`);
-      }
+  for (const block of blocks) {
+    const dataLine = block
+      .split(/\r?\n/)
+      .find((line) => line.startsWith("data: "));
+
+    if (!dataLine) {
+      continue;
     }
 
-    if (done) {
-      break;
+    const payload = JSON.parse(dataLine.slice(6));
+
+    if (payload.type === "COMPLETE") {
+      return payload.result;
+    }
+
+    if (payload.type === "FAILED") {
+      throw new Error(payload.error || `Tinyfish search failed for ${source.name}`);
     }
   }
 
@@ -434,7 +455,7 @@ async function runSourcesWithConcurrency(searchTerm, apiKey) {
   return finalizeResults(deduped);
 }
 
-export async function searchCatalog(searchTerm) {
+export async function searchCatalog(searchTerm, options = {}) {
   const normalizedSearch = normalizeKey(searchTerm);
   const catalog = readCatalog();
   const existing = catalog.queries.find(
@@ -445,7 +466,7 @@ export async function searchCatalog(searchTerm) {
     return { catalog, query: existing, fromCache: true };
   }
 
-  const apiKey = process.env.TINYFISH_API_KEY;
+  const apiKey = options.apiKey || process.env.TINYFISH_API_KEY;
 
   if (!apiKey) {
     throw new Error("Missing TINYFISH_API_KEY. Add it to .env.local before searching.");
@@ -476,7 +497,7 @@ export async function searchCatalog(searchTerm) {
   return { catalog: nextCatalog, query: nextQuery, fromCache: false };
 }
 
-export function tinyfishApiPlugin() {
+export function tinyfishApiPlugin(runtimeEnv = {}) {
   return {
     name: "tinyfish-api",
     configureServer(server) {
@@ -496,7 +517,9 @@ export function tinyfishApiPlugin() {
               return;
             }
 
-            const payload = await searchCatalog(searchTerm);
+            const payload = await searchCatalog(searchTerm, {
+              apiKey: runtimeEnv.TINYFISH_API_KEY
+            });
             sendJson(res, 200, payload);
           } catch (error) {
             sendJson(res, 500, {
