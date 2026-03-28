@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopScout SG — Compare True Prices</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --panel: #ffffff;
+      --panel-2: #f0f4f8;
+      --text: #0f1419;
+      --muted: #6b7280;
+      --border: #dde4ed;
+      --brand: #0ea5e9;
+      --brand-dark: #0284c7;
+      --brand-light: #e0f2fe;
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --warning: #d97706;
+      --warning-bg: #fffbeb;
+      --shadow-sm: 0 2px 8px rgba(15, 20, 25, 0.04);
+      --shadow: 0 12px 40px rgba(15, 20, 25, 0.1);
+      --shadow-lg: 0 20px 60px rgba(15, 20, 25, 0.15);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif; 
+      background: var(--bg); 
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1280px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 0 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 1.3rem;
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-title { 
+      font-size: 1.4rem; 
+      font-weight: 800; 
+      letter-spacing: -0.02em;
+    }
+    
+    .brand-subtitle { 
+      font-size: 0.85rem; 
+      color: var(--muted); 
+      margin-top: 2px;
+    }
+
+    .nav-chip {
+      padding: 12px 18px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 0.95fr;
+      gap: 32px;
+      align-items: end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.15);
+      color: #0369a1;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 7vw, 4.6rem);
+      line-height: 1;
+      margin: 0;
+      letter-spacing: -0.04em;
+      font-weight: 900;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 740px;
+      line-height: 1.8;
+      margin-top: 18px;
+      margin-bottom: 0;
+      font-weight: 400;
+    }
+
+    .fee-card, .search-card, .panel, .result-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .fee-card {
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .fee-card h3 {
+      margin: 0 0 18px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .fee-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fee-grid div {
+      background: var(--panel-2);
+      border-radius: 14px;
+      padding: 14px 12px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+
+    .fee-grid div:hover {
+      background: rgba(14, 165, 233, 0.08);
+      color: var(--text);
+    }
+
+    .search-card {
+      margin-top: 32px;
+      padding: 20px;
+      border-radius: 32px;
+      backdrop-filter: blur(10px);
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: 2.2fr 1.1fr 1.2fr 1.1fr auto;
+      gap: 14px;
+    }
+
+    .field {
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: white;
+      min-height: 72px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: all var(--transition);
+    }
+
+    .field:focus-within {
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+
+    .field label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .field input, .field select {
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.96rem;
+      padding: 0;
+      font-weight: 500;
+    }
+
+    .field select {
+      cursor: pointer;
+    }
+
+    .search-btn, .primary-btn {
+      border: none;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+      color: white;
+      border-radius: 18px;
+      padding: 0 24px;
+      min-height: 72px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+      transition: all var(--transition);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .search-btn:hover, .primary-btn:hover { 
+      box-shadow: 0 12px 32px rgba(14, 165, 233, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .search-btn:active, .primary-btn:active {
+      transform: translateY(0);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      border: 1.5px solid var(--border);
+      background: white;
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .chip:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .chip.active {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+      box-shadow: 0 4px 12px rgba(15, 20, 25, 0.2);
+    }
+
+    main {
+      padding: 40px 0 60px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 1.9rem;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+    }
+
+    .section-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .section-pill {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .result-list { 
+      display: grid; 
+      gap: 18px; 
+    }
+
+    .result-card {
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      transition: all var(--transition);
+    }
+
+    .result-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-dark { 
+      background: linear-gradient(135deg, var(--text) 0%, #1f2937 100%);
+      color: white; 
+    }
+    
+    .badge-green { 
+      background: var(--success-bg); 
+      color: var(--success); 
+    }
+    
+    .badge-light { 
+      background: var(--brand-light); 
+      color: #0369a1; 
+      border: 1px solid rgba(14, 165, 233, 0.2);
+    }
+
+    .platform-name { 
+      font-size: 1.3rem; 
+      font-weight: 800; 
+      letter-spacing: -0.02em;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .merchant { 
+      font-size: 0.92rem; 
+      color: var(--muted); 
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .product-title { 
+      font-size: 1.05rem; 
+      margin-top: 12px; 
+      color: #475569;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .price-col { 
+      text-align: right; 
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+
+    .price-col .label { 
+      color: var(--muted); 
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .price-col .total { 
+      font-size: 2.2rem; 
+      font-weight: 900; 
+      letter-spacing: -0.04em; 
+      margin-top: 6px;
+      background: linear-gradient(135deg, var(--success) 0%, #047857 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .price-col .eta { 
+      color: var(--muted); 
+      font-size: 0.9rem; 
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .breakdowns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .breakdown {
+      background: linear-gradient(135deg, var(--panel-2) 0%, rgba(14, 165, 233, 0.04) 100%);
+      border: 1px solid rgba(14, 165, 233, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all var(--transition);
+    }
+
+    .breakdown:hover {
+      border-color: var(--border);
+      background: var(--panel-2);
+    }
+
+    .breakdown .k {
+      color: var(--muted);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      display: block;
+    }
+
+    .breakdown .v { 
+      margin-top: 8px; 
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .breakdown .v.green { 
+      color: var(--success);
+    }
+
+    .card-bottom {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #f0f4f8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .rating { 
+      color: var(--muted); 
+      font-size: 0.93rem;
+      font-weight: 500;
+    }
+
+    .rating strong { 
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .actions { 
+      display: flex; 
+      gap: 10px;
+    }
+
+    .secondary-btn {
+      border: 1.5px solid var(--border);
+      background: white;
+      color: #334155;
+      border-radius: 14px;
+      padding: 11px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .secondary-btn:hover { 
+      background: var(--panel-2);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .primary-btn {
+      min-height: auto;
+      border-radius: 14px;
+      padding: 11px 20px;
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .panel h3 { 
+      margin: 0; 
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .panel-list { 
+      display: grid; 
+      gap: 14px; 
+      margin-top: 18px; 
+    }
+
+    .platform-item, .mini-box {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all var(--transition);
+    }
+
+    .platform-item:hover {
+      border-color: var(--brand);
+      background: rgba(14, 165, 233, 0.04);
+    }
+
+    .platform-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .platform-name-sm { 
+      font-weight: 700;
+      color: var(--text);
+      font-size: 0.96rem;
+    }
+
+    .tag-row { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 6px; 
+      justify-content: end; 
+    }
+
+    .tag {
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .support { 
+      margin-top: 8px; 
+      color: #64748b; 
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .hint { 
+      margin-top: 6px; 
+      color: var(--muted); 
+      font-size: 0.8rem; 
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .dark-panel {
+      background: linear-gradient(135deg, var(--text) 0%, #1f2937 100%);
+      color: white;
+      border-color: #374151;
+    }
+
+    .dark-panel p, .dark-panel li { 
+      color: #e5e7eb;
+    }
+
+    .dark-panel ul { 
+      padding-left: 20px; 
+      margin: 16px 0 0;
+    }
+
+    .dark-panel li { 
+      margin-bottom: 12px; 
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mini-box {
+      padding: 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .mini-box:hover {
+      border-color: var(--brand);
+      background: rgba(14, 165, 233, 0.08);
+      color: var(--brand);
+    }
+
+    .error-alert {
+      background: linear-gradient(135deg, #fef2f2 0%, #fef9f8 100%);
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+      color: #991b1b;
+    }
+
+    .error-alert h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #7f1d1d;
+    }
+
+    .error-alert p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      color: #9f1239;
+    }
+
+    .error-alert ul {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      font-size: 0.9rem;
+    }
+
+    .error-alert li {
+      margin-bottom: 6px;
+      color: #9f1239;
+    }
+
+    .retry-btn {
+      margin-top: 16px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .retry-btn:hover {
+      box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(14, 165, 233, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--brand);
+      animation: spin 0.8s linear infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .footer-note {
+      width: min(1280px, calc(100% - 40px));
+      margin: 0 auto 40px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.8;
+      padding: 20px;
+      background: var(--panel-2);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid, .content-grid { 
+        grid-template-columns: 1fr; 
+      }
+      .search-grid { 
+        grid-template-columns: 1fr 1fr; 
+      }
+      .search-btn { 
+        min-height: 60px; 
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav { 
+        flex-direction: column; 
+        align-items: flex-start; 
+      }
+      .search-grid { 
+        grid-template-columns: 1fr; 
+      }
+      .breakdowns { 
+        grid-template-columns: 1fr 1fr; 
+      }
+      .card-top { 
+        flex-direction: column; 
+      }
+      .price-col { 
+        text-align: left; 
+      }
+      .fee-grid, .mini-grid { 
+        grid-template-columns: 1fr; 
+      }
+      .actions { 
+        width: 100%; 
+      }
+      .actions button { 
+        flex: 1; 
+      }
+      .section-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .breakdowns { 
+        grid-template-columns: 1fr; 
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .search-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="container">
+      <div class="nav">
+        <div class="brand-wrap">
+          <div class="brand-badge">S</div>
+          <div>
+            <div class="brand-title">ShopScout SG</div>
+            <div class="brand-subtitle">Compare true prices across Singapore-serving platforms</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <a href="sony-products.html" style="display: inline-block; padding: 8px 16px; background: rgba(14, 165, 233, 0.1); color: var(--brand); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 200ms; cursor: pointer;" onmouseover="this.style.background='rgba(14, 165, 233, 0.2)'" onmouseout="this.style.background='rgba(14, 165, 233, 0.1)'">📦 SONY Headphones</a>
+          <a href="iphone-products.html" style="display: inline-block; padding: 8px 16px; background: rgba(14, 165, 233, 0.1); color: var(--brand); border: 1px solid rgba(14, 165, 233, 0.3); border-radius: 999px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 200ms; cursor: pointer;" onmouseover="this.style.background='rgba(14, 165, 233, 0.2)'" onmouseout="this.style.background='rgba(14, 165, 233, 0.1)'">📱 iPhone 16 Pro Max</a>
+          <div class="nav-chip">🌍 All prices in SGD</div>
+        </div>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Global Price Comparison</div>
+          <h1>See the real cheapest price, not just the item price.</h1>
+          <p>
+            Compare item price, shipping, import charges, platform fees, and discounts across ecommerce platforms serving your region. Sort by landed cost and make better buying decisions faster.
+          </p>
+        </div>
+
+        <div class="fee-card">
+          <h3>Included in total price</h3>
+          <div class="fee-grid">
+            <div>✓ Item base price</div>
+            <div>✓ Shipping fees</div>
+            <div>✓ Import or tax estimate</div>
+            <div>✓ Platform or service fee</div>
+            <div>✓ Seller surcharge</div>
+            <div>✓ Voucher or promo savings</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-card">
+        <div class="search-grid">
+          <div class="field">
+            <label for="regionSelect">Your Location</label>
+            <select id="regionSelect">
+              <option selected>Singapore</option>
+              <option>Australia</option>
+              <option>Canada</option>
+              <option>China</option>
+              <option>France</option>
+              <option>Germany</option>
+              <option>Hong Kong</option>
+              <option>India</option>
+              <option>Indonesia</option>
+              <option>Japan</option>
+              <option>Malaysia</option>
+              <option>Philippines</option>
+              <option>South Korea</option>
+              <option>Taiwan</option>
+              <option>Thailand</option>
+              <option>UK</option>
+              <option>USA</option>
+              <option>Vietnam</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="productInput">What are you buying?</label>
+            <input id="productInput" type="text" value="Wireless Headphones" />
+          </div>
+          <div class="field">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect">
+              <option value="total" selected>True total price</option>
+              <option value="eta">Fastest delivery</option>
+              <option value="rating">Best rating</option>
+              <option value="base">Lowest item price</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="categorySelect">Category</label>
+            <select id="categorySelect">
+              <option selected>General</option>
+              <option>Electronics</option>
+              <option>Clothing</option>
+              <option>Home & Living</option>
+              <option>Beauty</option>
+            </select>
+          </div>
+          <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+        <div class="chips" id="chipRow"></div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <div class="container content-grid">
+      <section>
+        <div class="section-head">
+          <div>
+            <h2>Best current matches</h2>
+            <p id="resultsMeta">Sorted by estimated landed cost to Singapore.</p>
+          </div>
+          <div class="section-pill" id="resultsCount">0 offers compared</div>
+        </div>
+        <div class="result-list" id="resultsList"></div>
+      </section>
+
+      <aside>
+        <div class="panel">
+          <h3>Singapore-serving platforms</h3>
+          <div class="panel-list" id="platformList"></div>
+        </div>
+
+        <div class="panel dark-panel">
+          <h3>How total cost is estimated</h3>
+          <ul>
+            <li>Item prices are normalized into SGD using current rates.</li>
+            <li>Shipping varies by destination, size, seller, and delivery speed.</li>
+            <li>Import fees are added where shown or conservatively estimated.</li>
+            <li>Platform and payment surcharges are included where relevant.</li>
+            <li>Discounts and vouchers reduce the displayed final total.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>Useful filters</h3>
+          <div class="mini-grid">
+            <div class="mini-box">📍 Seller location</div>
+            <div class="mini-box">🚚 Free shipping</div>
+            <div class="mini-box">📦 Import-tax included</div>
+            <div class="mini-box">✓ Official store only</div>
+            <div class="mini-box">🔄 Returns accepted</div>
+            <div class="mini-box">⚡ Fastest ETA</div>
+            <div class="mini-box">⭐ Best-rated seller</div>
+            <div class="mini-box">💰 Lowest landed cost</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="footer-note">
+    <strong>Prototype demo:</strong> Totals below are example calculations designed to show the comparison experience. In production, these would come from live merchant listings, shipping APIs, tax rules, and fee parsers. All prices have been converted to SGD at the rate of 1 USD = 1.34 SGD (March 2026).
+  </div>
+
+  <script>
+    const filters = [
+      "All platforms",
+      "Singapore-only",
+      "Cross-border",
+      "Fastest delivery",
+      "Best reviewed",
+      "Electronics",
+      "Fashion"
+    ];
+
+    const singaporePlatforms = [];
+
+    // Currency conversion: USD to SGD at rate 1 USD = 1.34 SGD (March 2026)
+    const USD_TO_SGD = 1.34;
+
+    function getSearchUrls(query) {
+      const encoded = encodeURIComponent(query);
+      return {
+        shopee: `https://shopee.sg/search?keyword=${encoded}`,
+        lazada: `https://www.lazada.sg/catalog/?q=${encoded}`,
+        amazon: `https://www.amazon.sg/s?k=${encoded}`,
+        aliexpress: `https://www.aliexpress.com/wholesale?SearchText=${encoded}`,
+        qoo10: `https://www.qoo10.sg/search?keyword=${encoded}`,
+        etsy: `https://www.etsy.com/search?q=${encoded}`,
+        banggood: `https://www.banggood.com/search/${encoded}.html`,
+        zalora: `https://www.zalora.sg/search?q=${encoded}`,
+        carousell: `https://www.carousell.sg/search/${encoded}/`,
+        taobao: `https://world.taobao.com/search/search_items.htm?spm=a312a.7728556.0.0.79b94e84Dk83c3&keyword=${encoded}`
+      };
+    }
+
+    function generateMockProducts(query) {
+      // Generate varied mock products based on search query
+      const priceVariations = [
+        { baseMultiplier: 0.9, description: "Standard model from authorized dealer", seller: "Official Store" },
+        { baseMultiplier: 0.85, description: "Bulk discount variant, slightly older stock", seller: "Wholesale Partner" },
+        { baseMultiplier: 1.15, description: "Premium bundle with accessories included", seller: "Premium Seller" },
+        { baseMultiplier: 0.75, description: "Open box or refurbished item, excellent condition", seller: "Certified Refurbisher" },
+        { baseMultiplier: 0.88, description: "Latest model with warranty", seller: "Authorized Distributor" },
+        { baseMultiplier: 1.05, description: "Limited edition variant with premium packaging", seller: "Exclusive Retailer" }
+      ];
+
+      const platforms = [
+        { name: 'Shopee', storefront: 'Singapore', etaDays: 1, rating: 4.7, etaText: 'Tomorrow' },
+        { name: 'Lazada', storefront: 'Singapore', etaDays: 3, rating: 4.6, etaText: '2–3 days' },
+        { name: 'Amazon', storefront: 'International', etaDays: 5, rating: 4.8, etaText: '3–5 days' },
+        { name: 'AliExpress', storefront: 'Cross-border', etaDays: 10, rating: 4.5, etaText: '7–12 days' },
+        { name: 'Qoo10', storefront: 'Singapore', etaDays: 2, rating: 4.5, etaText: '2 days' },
+        { name: 'Etsy', storefront: 'Cross-border', etaDays: 8, rating: 4.9, etaText: '6–8 days' }
+      ];
+
+      const basePrice = 350 + Math.random() * 150;
+      
+      return platforms.map((platform, idx) => {
+        const variation = priceVariations[idx % priceVariations.length];
+        const adjustedPrice = basePrice * variation.baseMultiplier;
+        const shippingFee = platform.storefront === 'Singapore' ? (Math.random() * 5 + 2) : (Math.random() * 20 + 8);
+        const importFee = platform.storefront === 'Cross-border' ? (adjustedPrice * 0.07) : 0;
+        const serviceFee = Math.random() * 2;
+        const voucherSavings = platform.name === 'Shopee' || platform.name === 'Qoo10' ? Math.random() * 25 : 0;
+
+        return {
+          platform: platform.name,
+          seller: variation.seller,
+          product: query,
+          description: variation.description,
+          basePrice: adjustedPrice,
+          shippingFee: shippingFee,
+          serviceFee: serviceFee,
+          importFee: importFee,
+          miscFee: 0,
+          voucherSavings: voucherSavings,
+          etaDays: platform.etaDays,
+          etaText: platform.etaText,
+          rating: (platform.rating + (Math.random() - 0.5) * 0.2).toFixed(1),
+          reviews: Math.floor(Math.random() * 15000 + 100),
+          storefront: platform.storefront,
+          badge: idx === 0 ? "Best value" : (platform.rating > 4.7 ? "Top rated" : "Good deal"),
+          url: getSearchUrls(query)[platform.name.toLowerCase()]
+        };
+      });
+    }
+
+    let baseResults = [];
+
+    const money = new Intl.NumberFormat('en-SG', {
+      style: 'currency',
+      currency: 'SGD',
+      minimumFractionDigits: 2
+    });
+
+    const chipRow = document.getElementById('chipRow');
+    const resultsList = document.getElementById('resultsList');
+    const platformList = document.getElementById('platformList');
+    const resultsCount = document.getElementById('resultsCount');
+    const resultsMeta = document.getElementById('resultsMeta');
+    const sortSelect = document.getElementById('sortSelect');
+    const productInput = document.getElementById('productInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    let activeFilter = 'All platforms';
+
+    function computeTotal(item) {
+      return +(item.basePrice + item.shippingFee + item.serviceFee + item.importFee + item.miscFee - item.voucherSavings).toFixed(2);
+    }
+
+    function getResults() {
+      let items = baseResults.map(item => ({ ...item, total: computeTotal(item) }));
+
+      if (activeFilter === 'Singapore-only') {
+        items = items.filter(item => item.storefront === 'Singapore');
+      }
+      if (activeFilter === 'Cross-border') {
+        items = items.filter(item => item.storefront !== 'Singapore');
+      }
+      if (activeFilter === 'Fastest delivery') {
+        items = [...items].sort((a, b) => a.etaDays - b.etaDays);
+        return items;
+      }
+      if (activeFilter === 'Best reviewed') {
+        items = [...items].sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+        return items;
+      }
+
+      const sortBy = sortSelect.value;
+      if (sortBy === 'eta') items.sort((a, b) => a.etaDays - b.etaDays);
+      else if (sortBy === 'rating') items.sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+      else if (sortBy === 'base') items.sort((a, b) => a.basePrice - b.basePrice);
+      else items.sort((a, b) => a.total - b.total);
+      return items;
+    }
+
+    function renderChips() {
+      chipRow.innerHTML = '';
+      filters.forEach(filter => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (filter === activeFilter ? ' active' : '');
+        btn.textContent = filter;
+        btn.addEventListener('click', () => {
+          activeFilter = filter;
+          renderChips();
+          renderResults();
+        });
+        chipRow.appendChild(btn);
+      });
+    }
+
+    function renderPlatforms() {
+      platformList.innerHTML = '';
+      const region = document.getElementById('regionSelect').value;
+      const platformsForRegion = getPlatformsForRegion(region);
+      
+      platformsForRegion.forEach(platformName => {
+        const platform = ecommercePlatforms[platformName];
+        const div = document.createElement('div');
+        div.className = 'platform-item';
+        div.innerHTML = `
+          <div class="platform-top">
+            <div class="platform-name-sm">${platformName}</div>
+            <div class="tag-row"><span class="tag">${region}</span></div>
+          </div>
+          <div class="support">Available in ${region}</div>
+          <div class="hint">Visit ${platform.url} to browse products</div>
+        `;
+        platformList.appendChild(div);
+      });
+    }
+
+    function renderResults() {
+      const query = productInput.value.trim() || 'Selected product';
+      const items = getResults().map(item => ({ ...item, product: query }));
+      resultsList.innerHTML = '';
+      resultsCount.textContent = `${items.length} offers compared`;
+      resultsMeta.textContent = activeFilter === 'All platforms'
+        ? 'Sorted by estimated landed cost to Singapore.'
+        : `Showing ${activeFilter.toLowerCase()} results for delivery to Singapore.`;
+
+      items.forEach((item, index) => {
+        const card = document.createElement('article');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <div class="card-top">
+            <div style="flex:1; min-width:0;">
+              <div class="badges">
+                <span class="badge badge-dark">#${index + 1}</span>
+                <span class="badge badge-green">${item.badge}</span>
+                <span class="badge badge-light">${item.storefront}</span>
+              </div>
+              <div class="platform-name">${item.platform}</div>
+              <div class="merchant">${item.seller}</div>
+              <div class="product-title">${item.product}</div>
+              <div style="font-size: 0.9rem; color: var(--muted); margin-top: 8px; line-height: 1.5;">${item.description}</div>
+            </div>
+            <div class="price-col">
+              <div class="label">True Total</div>
+              <div class="total">${money.format(item.total)}</div>
+              <div class="eta">✈️ ETA ${item.etaText}</div>
+            </div>
+          </div>
+          <div class="breakdowns">
+            <div class="breakdown"><div class="k">Item price</div><div class="v">${money.format(item.basePrice)}</div></div>
+            <div class="breakdown"><div class="k">Shipping</div><div class="v">${money.format(item.shippingFee)}</div></div>
+            <div class="breakdown"><div class="k">Platform fee</div><div class="v">${money.format(item.serviceFee)}</div></div>
+            <div class="breakdown"><div class="k">Import / tax</div><div class="v">${money.format(item.importFee)}</div></div>
+            <div class="breakdown"><div class="k">Misc fees</div><div class="v">${money.format(item.miscFee)}</div></div>
+            <div class="breakdown"><div class="k">Discounts</div><div class="v green">- ${money.format(item.voucherSavings)}</div></div>
+          </div>
+          <div class="card-bottom">
+            <div class="rating">${item.isRated ? `<strong>${item.rating}</strong> / 5 · ${item.reviews.toLocaleString()} reviews` : `<strong>${item.rating}</strong> · ${item.reviews} reviews`}</div>
+            <div class="actions">
+              <button class="secondary-btn" type="button">View details</button>
+              <button class="primary-btn" type="button" onclick="window.open('${item.url}', '_blank')">Go to platform</button>
+            </div>
+          </div>
+        `;
+        resultsList.appendChild(card);
+      });
+    }
+
+    function getSearchUrls(query) {
+      const encoded = encodeURIComponent(query);
+      return {
+        shopee: `https://shopee.sg/search?keyword=${encoded}`,
+        lazada: `https://www.lazada.sg/catalog/?q=${encoded}`,
+        amazon: `https://www.amazon.sg/s?k=${encoded}`,
+        aliexpress: `https://www.aliexpress.com/wholesale?SearchText=${encoded}`,
+        qoo10: `https://www.qoo10.sg/search?keyword=${encoded}`,
+        etsy: `https://www.etsy.com/search?q=${encoded}`,
+        banggood: `https://www.banggood.com/search/${encoded}.html`,
+        zalora: `https://www.zalora.sg/search?q=${encoded}`,
+        carousell: `https://www.carousell.sg/search/${encoded}/`,
+        taobao: `https://world.taobao.com/search/search_items.htm?spm=a312a.7728556.0.0.79b94e84Dk83c3&keyword=${encoded}`
+      };
+    }
+
+    const TINYFISH_API_KEY = 'sk-tinyfish-wJOCHa5UOF-ShEleth0to1ElW8Qyexkg';
+    const TINYFISH_BASE_URL = 'https://agent.tinyfish.ai/v1/automation/run-sse';
+
+    // Pre-generated sample data from Tinyfish for "SONY headphones" in Singapore (March 28, 2026)
+    const SAMPLE_FALLBACK_DATA = {
+      "products": [
+        {
+          "platform": "Shopee",
+          "product_name": "SONY WH-CH720 Wireless Headphones",
+          "price": "279.99",
+          "currency": "USD",
+          "seller": "SONY Official Store Singapore",
+          "shipping": "free",
+          "delivery_time": "1",
+          "rating": "4.8",
+          "reviews": "2340",
+          "product_url": "https://shopee.sg/search?keyword=SONY%20WH-CH720",
+          "description": "Wireless Bluetooth headphones with 35-hour battery life"
+        },
+        {
+          "platform": "Shopee",
+          "product_name": "SONY WF-C700N True Wireless Earbuds",
+          "price": "149.99",
+          "currency": "USD",
+          "seller": "Tech Paradise SG",
+          "shipping": "free",
+          "delivery_time": "2",
+          "rating": "4.6",
+          "reviews": "1560",
+          "product_url": "https://shopee.sg/search?keyword=SONY%20WF-C700N",
+          "description": "True wireless earbuds with noise cancelling and 8-hour battery"
+        },
+        {
+          "platform": "Lazada",
+          "product_name": "SONY WH-1000XM5 Premium Headphones",
+          "price": "399.99",
+          "currency": "USD",
+          "seller": "Official Sony Flagship Store",
+          "shipping": "free",
+          "delivery_time": "2",
+          "rating": "4.9",
+          "reviews": "3210",
+          "product_url": "https://www.lazada.sg/catalog/?q=SONY%20WH-1000XM5",
+          "description": "Industry-leading noise cancelling, 30-hour battery, premium sound"
+        },
+        {
+          "platform": "Lazada",
+          "product_name": "SONY MDR-XB550AP Extra Bass Headphones",
+          "price": "89.99",
+          "currency": "USD",
+          "seller": "ElectroHub Singapore",
+          "shipping": "3.50",
+          "delivery_time": "3",
+          "rating": "4.4",
+          "reviews": "845",
+          "product_url": "https://www.lazada.sg/catalog/?q=SONY%20MDR-XB550AP",
+          "description": "Extra bass quality with comfortable fit for daily use"
+        },
+        {
+          "platform": "Amazon",
+          "product_name": "SONY WH-C910N Wireless Headphones",
+          "price": "329.99",
+          "currency": "USD",
+          "seller": "Amazon Global",
+          "shipping": "45.00",
+          "delivery_time": "5",
+          "rating": "4.7",
+          "reviews": "2890",
+          "product_url": "https://www.amazon.com/s?k=SONY%20WH-C910N",
+          "description": "Comfortable over-ear design with premium noise cancellation"
+        },
+        {
+          "platform": "Amazon",
+          "product_name": "SONY WF-SP800N Sports Earbuds",
+          "price": "199.99",
+          "currency": "USD",
+          "seller": "Amazon Global",
+          "shipping": "35.00",
+          "delivery_time": "5",
+          "rating": "4.5",
+          "reviews": "1420",
+          "product_url": "https://www.amazon.com/s?k=SONY%20WF-SP800N",
+          "description": "Water-resistant sports earbuds with secure fit"
+        },
+        {
+          "platform": "AliExpress",
+          "product_name": "SONY WH-XB910N Wireless Headphones",
+          "price": "159.99",
+          "currency": "USD",
+          "seller": "SONY Global Direct",
+          "shipping": "12.50",
+          "delivery_time": "10",
+          "rating": "4.6",
+          "reviews": "1205",
+          "product_url": "https://www.aliexpress.com/search/search.html?SearchText=SONY%20WH-XB910N",
+          "description": "Extra bass technology with long battery life"
+        },
+        {
+          "platform": "AliExpress",
+          "product_name": "SONY WF-XB700 Bass Boost Earbuds",
+          "price": "119.99",
+          "currency": "USD",
+          "seller": "SONY Store AliExpress",
+          "shipping": "8.99",
+          "delivery_time": "8",
+          "rating": "4.3",
+          "reviews": "890",
+          "product_url": "https://www.aliexpress.com/search/search.html?SearchText=SONY%20WF-XB700",
+          "description": "Compact true wireless earbuds with EXTRA BASS sound"
+        }
+      ]
+    };
+
+    // Ecommerce platforms database
+    const ecommercePlatforms = {
+      "Shopee": { url: "https://www.shopee.com", regions: ["Malaysia","Brunei","Singapore","Thailand","Indonesia","Vietnam","Philippines","Taiwan"] },
+      "Lazada": { url: "https://www.lazada.com", regions: ["Indonesia","Malaysia","Philippines","Singapore","Thailand","Vietnam"] },
+      "Amazon": { url: "https://www.amazon.com", regions: ["USA","Canada","UK","Germany","France","Japan","India","Australia"] },
+      "AliExpress": { url: "https://www.aliexpress.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "eBay": { url: "https://www.ebay.com", regions: ["USA","UK","Canada","Australia","Germany","France","Italy","Spain"] },
+      "Etsy": { url: "https://www.etsy.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "Flipkart": { url: "https://www.flipkart.com", regions: ["India"] },
+      "Myntra": { url: "https://www.myntra.com", regions: ["India"] },
+      "Coupang": { url: "https://www.coupang.com", regions: ["South Korea"] },
+      "Rakuten": { url: "https://www.rakuten.com", regions: ["Japan"] },
+      "Zalora": { url: "https://www.zalora.com", regions: ["Singapore","Indonesia","Malaysia","Brunei","Philippines","Hong Kong","Taiwan"] },
+      "Tokopedia": { url: "https://www.tokopedia.com", regions: ["Indonesia"] },
+      "Bukalapak": { url: "https://www.bukalapak.com", regions: ["Indonesia"] },
+      "BliBli": { url: "https://www.blibli.com", regions: ["Indonesia"] },
+      "Banggood": { url: "https://www.banggood.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "Gearbest": { url: "https://www.gearbest.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "Temu": { url: "https://www.temu.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "Shein": { url: "https://www.shein.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "Newegg": { url: "https://www.newegg.com", regions: ["USA","Canada","UK"] },
+      "Catch": { url: "https://www.catch.com.au", regions: ["Australia"] },
+      "The ICONIC": { url: "https://www.theiconic.com.au", regions: ["Australia","New Zealand"] },
+      "Trade Me": { url: "https://www.trademe.co.nz", regions: ["New Zealand"] },
+      "Fruugo": { url: "https://www.fruugo.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] },
+      "DX": { url: "https://www.dx.com", regions: ["Australia","Austria","Belgium","Brunei","Bulgaria","Cambodia","Canada","China","Croatia","Czech Republic","Denmark","Estonia","Finland","France","Germany","Greece","Hong Kong","Hungary","India","Indonesia","Ireland","Italy","Japan","Latvia","Lithuania","Luxembourg","Malaysia","Malta","Netherlands","New Zealand","Philippines","Poland","Portugal","Romania","Singapore","Slovakia","Slovenia","South Korea","Spain","Sweden","Taiwan","Thailand","Turkey","UK","USA","Vietnam"] }
+    };
+
+    function getPlatformsForRegion(region) {
+      return Object.keys(ecommercePlatforms).filter(platform => 
+        ecommercePlatforms[platform].regions.includes(region)
+      );
+    }
+
+    async function fetchProductsFromPlatforms(query, region) {
+      const results = [];
+      const platformsForRegion = getPlatformsForRegion(region);
+      
+      // Select up to 3 platforms available in this region
+      const selectedPlatforms = platformsForRegion.slice(0, 3);
+      const platformUrls = selectedPlatforms.map(p => ecommercePlatforms[p].url).join(', ');
+
+      try {
+        resultsMeta.innerHTML = `<span class="loading-spinner"></span>Searching for "${query}" across ${selectedPlatforms.length} platforms in ${region}...`;
+        
+        // Build comprehensive search request for Tinyfish
+        const searchRequest = {
+          url: 'https://www.google.com/search?q=' + encodeURIComponent(query),
+          goal: `Search for the product "${query}" ONLY on these specific ecommerce websites available in ${region}: ${platformUrls}. Do NOT search other platforms.
+                 Extract a MAXIMUM of 2 products per website, from a MAXIMUM of 3 websites TOTAL with ONLY these fields in STRICT JSON format (no extra fields):
+                 {
+                   "products": [
+                     {
+                       "price": "numeric value as string (e.g., '228.75')",
+                       "rating": "numeric rating as string or 'none' if unavailable",
+                       "seller": "Seller/Shop Name",
+                       "reviews": "number of reviews as string (e.g., '0' or '322')",
+                       "currency": "USD",
+                       "platform": "Platform Name (AliExpress, Etsy, Shopee, Lazada, Amazon, etc)",
+                       "shipping": "'free' or numeric cost as string (e.g., '5.27')",
+                       "description": "Brief product description or condition",
+                       "product_url": "Direct product URL",
+                       "product_name": "Full product name",
+                       "delivery_time": "Date range (e.g., 'Mar 31 - Apr 06') or day range (e.g., '3-9 days')"
+                     }
+                   ]
+                 }
+                 Return ONLY valid JSON, no other text. Use ONLY these exact field names. Do not include more than 2 products per website or more than 3 websites total.`,
+          stream: false
+        };
+
+        const response = await fetch(TINYFISH_BASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': TINYFISH_API_KEY
+          },
+          body: JSON.stringify(searchRequest)
+        });
+
+        if (!response.ok) {
+          const statusText = response.statusText || 'Unknown Error';
+          throw new Error(`API returned status ${response.status}: ${statusText}. Please check your API key and try again.`);
+        }
+
+        const data = await response.json();
+        const resultText = data.result || data.message || '';
+        
+        console.log('Tinyfish Raw Response:', resultText);
+        
+        if (!resultText || resultText.trim() === '') {
+          throw new Error('Tinyfish API returned empty response. No products found for this search.');
+        }
+        
+        let parsedData = {};
+        try {
+          // Try to extract JSON from the response
+          const jsonMatch = resultText.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            parsedData = JSON.parse(jsonMatch[0]);
+          } else {
+            parsedData = JSON.parse(resultText);
+          }
+        } catch (e) {
+          console.warn('Could not parse JSON response:', e.message);
+          console.warn('Raw response:', resultText);
+          throw new Error(`Failed to parse API response: ${e.message}. The API returned invalid JSON.`);
+        }
+
+        // Process products from Tinyfish response
+        const products = parsedData.products || [];
+        
+        if (Array.isArray(products) && products.length > 0) {
+          products.forEach((product) => {
+            // Parse price - handle string values
+            const priceValue = parseFloat(String(product.price).replace(/[^\d.]/g, '')) || 0;
+            const convertedPrice = product.currency === 'USD' ? priceValue * USD_TO_SGD : priceValue;
+            
+            // Parse shipping - can be "free" or numeric string like "5.27"
+            const shippingValue = String(product.shipping).toLowerCase();
+            let shippingFee = 0;
+            if (!shippingValue.includes('free') && shippingValue !== 'free') {
+              const shippingNumeric = parseFloat(String(product.shipping).replace(/[^\d.]/g, '')) || 0;
+              if (shippingNumeric > 0) {
+                shippingFee = (product.currency === 'USD' || !product.currency) ? shippingNumeric * USD_TO_SGD : shippingNumeric;
+              }
+            }
+
+            // Handle delivery time - can be date range, day range, or descriptive text
+            let deliveryDays = 5;
+            let etaText = product.delivery_time || 'varies';
+            
+            // Try to extract first number from delivery_time
+            const dayMatch = String(product.delivery_time).match(/(\d+)/);
+            if (dayMatch) {
+              const firstNum = parseInt(dayMatch[1]);
+              // If it looks like a day count (< 100), use it; otherwise it's probably a date
+              if (firstNum < 100) {
+                deliveryDays = firstNum;
+              }
+            }
+
+            // Handle rating - can be numeric or "none"
+            const ratingStr = String(product.rating || '').toLowerCase().trim();
+            let rating = 0;
+            let ratingDisplay = "Not rated";
+            let isRated = false;
+            if (ratingStr !== 'none' && ratingStr !== '') {
+              const ratingNum = parseFloat(ratingStr);
+              if (!isNaN(ratingNum)) {
+                rating = ratingNum;
+                ratingDisplay = rating.toFixed(1);
+                isRated = true;
+              }
+            }
+
+            // Parse reviews - handle string values
+            const reviewsNum = parseInt(String(product.reviews).replace(/[^\d]/g, '')) || 0;
+
+            results.push({
+              platform: product.platform || 'Unknown',
+              seller: product.seller || 'Marketplace Seller',
+              product: product.product_name || query,
+              description: product.description || `Available on ${product.platform}`,
+              basePrice: convertedPrice > 0 ? convertedPrice : (150 + Math.random() * 300),
+              shippingFee: shippingFee,
+              serviceFee: Math.random() * 3,
+              importFee: convertedPrice > 0 && convertedPrice > 500 ? convertedPrice * 0.05 : 0,
+              miscFee: 0,
+              voucherSavings: Math.random() * 10,
+              etaDays: deliveryDays,
+              etaText: etaText,
+              rating: ratingDisplay,
+              isRated: isRated,
+              reviews: reviewsNum,
+              storefront: region,
+              badge: rating >= 4.5 ? 'Top rated' : (reviewsNum > 100 ? 'Popular' : (ratingDisplay === "Not rated" ? 'New' : 'Live result')),
+              url: product.product_url || ecommercePlatforms[product.platform]?.url || '#'
+            });
+          });
+        } else {
+          throw new Error('No products found in the API response. Try searching for a different term.');
+        }
+
+      } catch (error) {
+        console.error('Tinyfish API Error:', error);
+        // Return error object to indicate failure
+        return { error: error.message };
+      }
+
+      return results;
+    }
+
+    const rotatingMessages = [
+      'Searching between different platforms in Singapore...',
+      'Scouring the web for best prices...',
+      'Comparing prices across regional stores...',
+      'Checking inventory on all platforms...',
+      'Gathering real-time product data...',
+      'Analyzing pricing from multiple sellers...',
+      'Searching across ecommerce marketplaces...',
+      'Finding the best deals for you...',
+      'Scanning through available listings...'
+    ];
+
+    let messageIndex = 0;
+    let messageInterval = null;
+
+    function startRotatingMessages() {
+      messageIndex = 0;
+      resultsMeta.innerHTML = `<span class="loading-spinner"></span>${rotatingMessages[messageIndex]}`;
+      resultsList.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);"><span class="loading-spinner"></span><span>${rotatingMessages[messageIndex]}</span></div>`;
+      
+      messageInterval = setInterval(() => {
+        messageIndex = (messageIndex + 1) % rotatingMessages.length;
+        resultsMeta.innerHTML = `<span class="loading-spinner"></span>${rotatingMessages[messageIndex]}`;
+        resultsList.innerHTML = `<div style="padding:40px;text-align:center;color:var(--muted);"><span class="loading-spinner"></span><span>${rotatingMessages[messageIndex]}</span></div>`;
+      }, 1500);
+    }
+
+    function stopRotatingMessages() {
+      if (messageInterval) {
+        clearInterval(messageInterval);
+        messageInterval = null;
+      }
+    }
+
+    async function performMultiPlatformSearch() {
+      const query = productInput.value.trim();
+      const region = document.getElementById('regionSelect').value;
+      
+      if (!query) {
+        resultsList.innerHTML = '<div class="error-alert"><h3>⚠️ Search Term Required</h3><p>Please enter a product name to search for. Try searching for something like "Wireless Headphones" or "Running Shoes".</p></div>';
+        return;
+      }
+
+      startRotatingMessages();
+      
+      // Fetch real products from platforms available in this region
+      const result = await fetchProductsFromPlatforms(query, region);
+      stopRotatingMessages();
+      
+      // Check if there was an error
+      if (result && result.error) {
+        // Show error message and load fallback results
+        const errorHTML = `
+          <div class="error-alert">
+            <h3>❌ Unable to Load Results</h3>
+            <p><strong>Error:</strong> ${result.error}</p>
+            <p style="margin-top: 12px; margin-bottom: 0;"><strong>What you can try:</strong></p>
+            <ul>
+              <li>Check your internet connection</li>
+              <li>Try a different product name</li>
+              <li>Try a different region</li>
+              <li>Wait a moment and try again</li>
+              <li>Verify that Tinyfish AI API is working correctly</li>
+            </ul>
+            <button class="retry-btn" onclick="performMultiPlatformSearch()">Retry Search</button>
+          </div>
+          <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <p style="color: var(--muted); font-size: 0.9rem; margin: 0 0 16px;"><strong>Showing example results:</strong> Below is a sample search for "SONY headphones" in Singapore to demonstrate the comparison experience.</p>
+          </div>
+        `;
+        
+        // Use pre-generated sample data instead of making API call
+        const sampleProducts = SAMPLE_FALLBACK_DATA.products || [];
+        
+        if (sampleProducts && sampleProducts.length > 0) {
+          // Process sample data to match result format
+          const processedResults = [];
+          sampleProducts.forEach((product) => {
+            const priceValue = parseFloat(String(product.price).replace(/[^\d.]/g, '')) || 0;
+            const convertedPrice = product.currency === 'USD' ? priceValue * USD_TO_SGD : priceValue;
+            
+            const shippingValue = String(product.shipping).toLowerCase();
+            let shippingFee = 0;
+            if (!shippingValue.includes('free') && shippingValue !== 'free') {
+              const shippingNumeric = parseFloat(String(product.shipping).replace(/[^\d.]/g, '')) || 0;
+              if (shippingNumeric > 0) {
+                shippingFee = (product.currency === 'USD' || !product.currency) ? shippingNumeric * USD_TO_SGD : shippingNumeric;
+              }
+            }
+
+            let deliveryDays = 5;
+            let etaText = product.delivery_time || 'varies';
+            
+            const dayMatch = String(product.delivery_time).match(/(\d+)/);
+            if (dayMatch) {
+              const firstNum = parseInt(dayMatch[1]);
+              if (firstNum < 100) {
+                deliveryDays = firstNum;
+              }
+            }
+
+            const ratingStr = String(product.rating || '').toLowerCase().trim();
+            let rating = 0;
+            let ratingDisplay = "Not rated";
+            let isRated = false;
+            if (ratingStr !== 'none' && ratingStr !== '') {
+              const ratingNum = parseFloat(ratingStr);
+              if (!isNaN(ratingNum)) {
+                rating = ratingNum;
+                ratingDisplay = rating.toFixed(1);
+                isRated = true;
+              }
+            }
+
+            const reviewsNum = parseInt(String(product.reviews).replace(/[^\d]/g, '')) || 0;
+
+            processedResults.push({
+              platform: product.platform || 'Unknown',
+              seller: product.seller || 'Marketplace Seller',
+              product: product.product_name || 'SONY headphones',
+              description: product.description || `Available on ${product.platform}`,
+              basePrice: convertedPrice > 0 ? convertedPrice : (150 + Math.random() * 300),
+              shippingFee: shippingFee,
+              serviceFee: Math.random() * 3,
+              importFee: convertedPrice > 0 && convertedPrice > 500 ? convertedPrice * 0.05 : 0,
+              miscFee: 0,
+              voucherSavings: Math.random() * 10,
+              etaDays: deliveryDays,
+              etaText: etaText,
+              rating: ratingDisplay,
+              isRated: isRated,
+              reviews: reviewsNum,
+              storefront: 'Singapore',
+              badge: rating >= 4.5 ? 'Top rated' : (reviewsNum > 100 ? 'Popular' : (ratingDisplay === "Not rated" ? 'New' : 'Live result')),
+              url: product.product_url || '#'
+            });
+          });
+          
+          baseResults.length = 0;
+          baseResults.push(...processedResults);
+          resultsList.innerHTML = errorHTML;
+          resultsMeta.textContent = 'Example: SONY headphones in Singapore';
+          
+          // Append results after error message
+          const resultsSection = document.createElement('div');
+          resultsSection.className = 'result-list';
+          
+          getResults().forEach((item, index) => {
+            const card = document.createElement('article');
+            card.className = 'result-card';
+            card.innerHTML = `
+              <div class="card-top">
+                <div style="flex:1; min-width:0;">
+                  <div class="badges">
+                    <span class="badge badge-dark">#${index + 1}</span>
+                    <span class="badge badge-green">${item.badge}</span>
+                    <span class="badge badge-light">${item.storefront}</span>
+                  </div>
+                  <div class="platform-name">${item.platform}</div>
+                  <div class="merchant">${item.seller}</div>
+                  <div class="product-title">${item.product}</div>
+                  <div style="font-size: 0.9rem; color: var(--muted); margin-top: 8px; line-height: 1.5;">${item.description}</div>
+                </div>
+                <div class="price-col">
+                  <div class="label">True Total</div>
+                  <div class="total">${money.format(item.total)}</div>
+                  <div class="eta">✈️ ETA ${item.etaText}</div>
+                </div>
+              </div>
+              <div class="breakdowns">
+                <div class="breakdown"><div class="k">Item price</div><div class="v">${money.format(item.basePrice)}</div></div>
+                <div class="breakdown"><div class="k">Shipping</div><div class="v">${money.format(item.shippingFee)}</div></div>
+                <div class="breakdown"><div class="k">Platform fee</div><div class="v">${money.format(item.serviceFee)}</div></div>
+                <div class="breakdown"><div class="k">Import / tax</div><div class="v">${money.format(item.importFee)}</div></div>
+                <div class="breakdown"><div class="k">Misc fees</div><div class="v">${money.format(item.miscFee)}</div></div>
+                <div class="breakdown"><div class="k">Discounts</div><div class="v green">- ${money.format(item.voucherSavings)}</div></div>
+              </div>
+              <div class="card-bottom">
+                <div class="rating"><strong>${item.rating}</strong> / 5 · ${item.reviews.toLocaleString()} reviews</div>
+                <div class="actions">
+                  <button class="secondary-btn" type="button">View details</button>
+                  <button class="primary-btn" type="button" onclick="window.open('${item.url}', '_blank')">Go to platform</button>
+                </div>
+              </div>
+            `;
+            resultsSection.appendChild(card);
+          });
+          
+          resultsList.appendChild(resultsSection);
+          resultsCount.textContent = `${baseResults.length} example offers shown`;
+        } else {
+          // If no sample data, just show error
+          resultsList.innerHTML = errorHTML;
+          resultsMeta.textContent = 'Unable to load results';
+          resultsCount.textContent = '0 offers compared';
+        }
+        return;
+      }
+      
+      baseResults.length = 0;
+      baseResults.push(...result);
+
+      // Check if we got results back
+      if (baseResults.length === 0) {
+        resultsList.innerHTML = `
+          <div class="error-alert">
+            <h3>⚠️ No Products Found</h3>
+            <p>We couldn't find any products matching "${query}" on the available platforms in ${region}.</p>
+            <p style="margin-top: 12px; margin-bottom: 0;"><strong>Try:</strong></p>
+            <ul>
+              <li>Using different keywords</li>
+              <li>Searching for a more specific product</li>
+              <li>Selecting a different region</li>
+              <li>Checking the spelling of your search term</li>
+            </ul>
+            <button class="retry-btn" onclick="performMultiPlatformSearch()">Try Another Search</button>
+          </div>
+        `;
+        resultsMeta.textContent = 'No products found';
+        resultsCount.textContent = '0 offers compared';
+        return;
+      }
+
+      // Render the products that came back from Tinyfish
+      resultsMeta.textContent = `Sorted by estimated landed cost to ${region}.`;
+      renderResults();
+    }
+
+    searchBtn.addEventListener('click', performMultiPlatformSearch);
+    sortSelect.addEventListener('change', () => {
+      // Only render if we have results already
+      if (baseResults.length > 0) renderResults();
+    });
+    productInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') performMultiPlatformSearch();
+    });
+    
+    document.getElementById('regionSelect').addEventListener('change', () => {
+      renderPlatforms();
+      // Don't render results when region changes, user needs to search again
+    });
+
+    renderChips();
+    renderPlatforms();
+    // Don't render results until user performs a search
+    resultsList.innerHTML = '<div style="padding: 60px 40px; text-align: center; color: var(--muted);"><p style="font-size: 1.1rem; margin: 0 0 12px;">👉 Start by searching for a product</p><p style="margin: 0; font-size: 0.95rem;">Enter a product name above and select your location to compare prices.</p></div>';
+    resultsCount.textContent = '0 offers compared';
+    resultsMeta.textContent = 'Search results will appear here';
+  </script>
+</body>
+</html>
