@@ -1,21 +1,9 @@
 {
   "catalog_name": "Tinyfish Cached Marketplace Catalog",
-  "generated_at": "2026-03-28T08:37:05.751Z",
+  "generated_at": "2026-03-28T08:40:24.838Z",
   "supported_region": "Singapore",
   "default_currency": "SGD",
   "queries": [
-    {
-      "search_term": "Apple AirTag 4 Pack",
-      "search_aliases": [
-        "apple airtag 4 pack"
-      ],
-      "category": "Marketplace Search",
-      "vertical": "retail_commerce",
-      "search_intent": "Find exhaustive landed-cost listings for Apple AirTag 4 Pack across the Tinyfish marketplace network.",
-      "search_description": "Cached live search built from 15 source targets for Apple AirTag 4 Pack.",
-      "timestamp": "2026-03-28T08:37:05.751Z",
-      "results": []
-    },
     {
       "search_term": "Anker Prime 27650 Power Bank",
       "search_aliases": [

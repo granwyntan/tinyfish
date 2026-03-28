@@ -93,12 +93,25 @@ function ensureCacheFile() {
 
 function readCatalog() {
   ensureCacheFile();
-  return JSON.parse(readFileSync(CACHE_FILE, "utf8"));
+  return sanitizeCatalog(JSON.parse(readFileSync(CACHE_FILE, "utf8")));
 }
 
 function writeCatalog(catalog) {
   ensureCacheFile();
-  writeFileSync(CACHE_FILE, JSON.stringify(catalog, null, 2) + "\n");
+  writeFileSync(CACHE_FILE, JSON.stringify(sanitizeCatalog(catalog), null, 2) + "\n");
+}
+
+function sanitizeCatalog(catalog) {
+  const queries = Array.isArray(catalog?.queries)
+    ? catalog.queries.filter(
+        (query) => Array.isArray(query?.results) && query.results.length > 0
+      )
+    : [];
+
+  return {
+    ...catalog,
+    queries
+  };
 }
 
 function sendJson(res, status, payload) {
@@ -473,6 +486,13 @@ export async function searchCatalog(searchTerm, options = {}) {
   }
 
   const results = await runSourcesWithConcurrency(searchTerm, apiKey);
+
+  if (results.length === 0) {
+    throw new Error(
+      "Tinyfish returned no usable listings for this search yet. Your cached catalog is unchanged."
+    );
+  }
+
   const nextQuery = {
     search_term: searchTerm,
     search_aliases: Array.from(

@@ -12,16 +12,18 @@ export function getBestSearchResponse(
   queries: SearchResponse[],
   query: string
 ) {
+  const candidates = queries.filter((candidate) => candidate.results.length > 0);
+  const searchPool = candidates.length > 0 ? candidates : queries;
   const normalizedQuery = normalizeText(query);
 
   if (!normalizedQuery) {
-    return queries[0];
+    return searchPool[0];
   }
 
-  let bestMatch = queries[0];
+  let bestMatch = searchPool[0];
   let bestScore = -1;
 
-  for (const candidate of queries) {
+  for (const candidate of searchPool) {
     const candidateTerms = [
       candidate.search_term,
       candidate.category,
@@ -66,7 +68,9 @@ export function getExactSearchResponse(
   const normalizedQuery = normalizeText(query);
 
   return queries.find(
-    (candidate) => normalizeText(candidate.search_term) === normalizedQuery
+    (candidate) =>
+      candidate.results.length > 0 &&
+      normalizeText(candidate.search_term) === normalizedQuery
   );
 }
 
