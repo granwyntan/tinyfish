@@ -1,4 +1,8 @@
-import type { MarketplaceCatalog, SearchResponse } from "../types/marketplace";
+import type {
+  MarketplaceCatalog,
+  SearchResponse,
+  SearchSuggestion
+} from "../types/marketplace";
 
 interface TinyfishSearchPayload {
   catalog: MarketplaceCatalog;
@@ -42,13 +46,14 @@ export async function fetchCatalog() {
   }
 }
 
-export async function searchCatalog(searchTerm: string) {
+export async function searchCatalog(searchTerm: string, signal?: AbortSignal) {
   try {
     const response = await fetch("/api/tinyfish/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
+      signal,
       body: JSON.stringify({ searchTerm })
     });
 
@@ -62,6 +67,35 @@ export async function searchCatalog(searchTerm: string) {
 
     return payload;
   } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+
+    throw toReadableNetworkError(error);
+  }
+}
+
+export async function fetchAutocomplete(query: string, signal?: AbortSignal) {
+  try {
+    const params = new URLSearchParams({ q: query });
+    const response = await fetch(`/api/tinyfish/autocomplete?${params.toString()}`, {
+      signal
+    });
+    const payload = (await parseJsonResponse(response)) as {
+      suggestions?: SearchSuggestion[];
+      error?: string;
+    };
+
+    if (!response.ok || payload.error) {
+      throw new Error(payload.error || "Tinyfish autocomplete failed.");
+    }
+
+    return payload.suggestions || [];
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw error;
+    }
+
     throw toReadableNetworkError(error);
   }
 }

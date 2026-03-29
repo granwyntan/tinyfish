@@ -52,7 +52,8 @@ export default async function handler(req, res) {
     }
 
     const payload = await searchCatalog(searchTerm, {
-      apiKey: process.env.TINYFISH_API_KEY
+      apiKey: process.env.TINYFISH_API_KEY,
+      blobToken: process.env.BLOB_READ_WRITE_TOKEN
     });
 
     res.status(200).json(payload);

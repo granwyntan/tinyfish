@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ProductResult } from "../types/marketplace";
 import {
   compactFormatter,
@@ -22,6 +23,8 @@ const breakdownRows = [
 ] as const;
 
 export function ProductModal({ product, onClose }: ProductModalProps) {
+  const [descriptionMode, setDescriptionMode] = useState<"details" | "reviews">("details");
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071217]/82 px-4 py-6 backdrop-blur-md">
       <div className="relative max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-[36px] border border-white/10 bg-[#0c1b21] shadow-[0_28px_90px_rgba(4,8,10,0.42)]">
@@ -71,8 +74,35 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 <h2 className="max-w-2xl text-3xl font-semibold text-white">
                   {product.product_name}
                 </h2>
-                <p className="surface-scroll mt-3 max-h-36 max-w-2xl overflow-y-auto pr-2 text-base leading-7 text-white/68">
-                  {product.content.detailed_description}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {[
+                    ["details", "Detailed description"],
+                    ["reviews", "Review summary"]
+                  ].map(([key, label]) => {
+                    const active = descriptionMode === key;
+
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() =>
+                          setDescriptionMode(key as "details" | "reviews")
+                        }
+                        className={`rounded-full border px-3 py-2 text-xs uppercase tracking-[0.18em] transition ${
+                          active
+                            ? "border-[#f0ba6d]/40 bg-[#f0ba6d]/14 text-[#f7dfb0]"
+                            : "border-white/12 bg-black/24 text-white/70 hover:text-white"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="surface-scroll mt-4 max-h-36 max-w-2xl overflow-y-auto pr-2 text-base leading-7 text-white/68">
+                  {descriptionMode === "details"
+                    ? product.content.detailed_description
+                    : product.content.review_summary}
                 </p>
               </div>
 
@@ -236,13 +266,6 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                   {product.seller_name} · {product.condition}
                 </p>
               </div>
-            </div>
-
-            <div className="rounded-[28px] border border-white/10 bg-white/4 p-5">
-              <h3 className="text-lg font-semibold text-white">Review summary</h3>
-              <p className="surface-scroll mt-4 max-h-40 overflow-y-auto pr-2 text-sm leading-7 text-white/68">
-                {product.content.review_summary}
-              </p>
             </div>
 
             <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(140deg,_rgba(77,179,171,0.12),_rgba(255,255,255,0.04))] p-5">

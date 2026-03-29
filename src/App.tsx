@@ -1,15 +1,17 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FilterSidebar } from "./components/FilterSidebar";
 import { ProductCard } from "./components/ProductCard";
 import { ProductModal } from "./components/ProductModal";
 import { SearchBar } from "./components/SearchBar";
-import { fetchCatalog, searchCatalog } from "./lib/tinyfish";
+import { fetchAutocomplete, fetchCatalog, searchCatalog } from "./lib/tinyfish";
 import { marketplaceCatalog } from "./data/mockResults";
 import type {
   FiltersState,
+  MarketplaceCatalog,
   ProductResult,
   RangeFilter,
   SearchResponse,
+  SearchSuggestion,
   SortOption
 } from "./types/marketplace";
 import {
@@ -20,14 +22,149 @@ import {
   sgdFormatter
 } from "./utils/formatters";
 import {
+  getCompositeSearchResponse,
   getBestSearchResponse,
   getExactSearchResponse,
+  getLocalSuggestions,
   matchesProductQuery
 } from "./utils/search";
 
 type PageView = "compare" | "dataset" | "engine";
 
+const preferredOriginMarkets = [
+  "SG",
+  "CN",
+  "JP",
+  "KR",
+  "VN",
+  "ID",
+  "IN",
+  "MY",
+  "US",
+  "EU",
+  "AU",
+  "NZ",
+  "HK",
+  "TW",
+  "TH",
+  "PH",
+  "GB",
+  "CA",
+  "CH",
+  "AE"
+];
+
+const preferredOriginCurrencies = [
+  "SGD",
+  "CNY",
+  "JPY",
+  "KRW",
+  "VND",
+  "IDR",
+  "INR",
+  "MYR",
+  "USD",
+  "EUR",
+  "AUD",
+  "NZD",
+  "HKD",
+  "TWD",
+  "THB",
+  "PHP",
+  "GBP",
+  "CAD",
+  "CHF",
+  "AED"
+];
+
+const preferredRetailTargets = [
+  { name: "Shopee SG", url: "https://shopee.sg" },
+  { name: "Lazada SG", url: "https://www.lazada.sg" },
+  { name: "Amazon SG", url: "https://www.amazon.sg" },
+  { name: "Carousell SG", url: "https://www.carousell.sg" },
+  { name: "Zalora SG", url: "https://www.zalora.sg" },
+  { name: "FairPrice SG", url: "https://www.fairprice.com.sg" },
+  { name: "RedMart", url: "https://redmart.lazada.sg" },
+  { name: "Sephora SG", url: "https://www.sephora.sg" },
+  { name: "Decathlon SG", url: "https://www.decathlon.sg" },
+  { name: "Courts SG", url: "https://www.courts.com.sg" },
+  { name: "Harvey Norman SG", url: "https://www.harveynorman.com.sg" },
+  { name: "Best Denki SG", url: "https://www.bestdenki.com.sg" },
+  { name: "Challenger SG", url: "https://www.challenger.sg" },
+  { name: "Amazon US", url: "https://www.amazon.com" },
+  { name: "Amazon JP", url: "https://www.amazon.co.jp" },
+  { name: "Rakuten JP", url: "https://www.rakuten.co.jp" },
+  { name: "Mercari JP", url: "https://jp.mercari.com" },
+  { name: "AliExpress", url: "https://www.aliexpress.com" },
+  { name: "Taobao", url: "https://world.taobao.com" },
+  { name: "Tmall Global", url: "https://www.tmall.com" },
+  { name: "eBay", url: "https://www.ebay.com" },
+  { name: "Walmart", url: "https://www.walmart.com" },
+  { name: "Target US", url: "https://www.target.com" },
+  { name: "Newegg", url: "https://www.newegg.com" },
+  { name: "HKTVmall", url: "https://www.hktvmall.com" }
+];
+
+const SESSION_CATALOG_KEY = "tinyfish-session-catalog";
+const SESSION_ACTIVE_QUERY_KEY = "tinyfish-session-active-query";
+const SESSION_QUERY_INPUT_KEY = "tinyfish-session-query-input";
+
+const emptySearchResponse: SearchResponse = {
+  search_term: "",
+  search_aliases: [],
+  category: "Marketplace Search",
+  vertical: "retail_commerce",
+  search_intent: "Search for a product to start comparing listings.",
+  search_description: "No active Tinyfish search yet.",
+  timestamp: "",
+  results: []
+};
+
+function mergeSuggestions(
+  ...groups: Array<SearchSuggestion[] | undefined>
+) {
+  return Array.from(
+    new Map(
+      groups
+        .flat()
+        .filter((suggestion): suggestion is SearchSuggestion => Boolean(suggestion))
+        .map((suggestion) => [`${suggestion.kind}-${suggestion.value.toLowerCase()}`, suggestion])
+    ).values()
+  ).slice(0, 8);
+}
+
+function readSessionValue(key: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeSessionValue(key: string, value: string) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch {
+    // ignore session storage failures
+  }
+}
+
 function getRangeBounds(values: number[]): RangeFilter {
+  if (values.length === 0) {
+    return {
+      min: 0,
+      max: 0
+    };
+  }
+
   return {
     min: Math.floor(Math.min(...values)),
     max: Math.ceil(Math.max(...values))
@@ -47,19 +184,44 @@ function getSearchBounds(activeSearch: SearchResponse) {
         product.fulfillment.delivery.min_days,
         product.fulfillment.delivery.max_days
       ])
+    ),
+    shippingFeeBounds: getRangeBounds(
+      activeSearch.results.map((product) => product.pricing.landed_sgd.shipping)
+    ),
+    gstBounds: getRangeBounds(
+      activeSearch.results.map((product) => product.pricing.landed_sgd.gst)
+    ),
+    reviewCountBounds: getRangeBounds(
+      activeSearch.results.map((product) => product.metrics.rating_count)
+    ),
+    soldCountBounds: getRangeBounds(
+      activeSearch.results.map((product) => product.metrics.sold_count)
     )
   };
 }
 
 function createFilters(activeSearch: SearchResponse): FiltersState {
-  const { totalPriceBounds, pricePerUnitBounds, deliveryBounds } =
+  const {
+    totalPriceBounds,
+    pricePerUnitBounds,
+    deliveryBounds,
+    shippingFeeBounds,
+    gstBounds,
+    reviewCountBounds,
+    soldCountBounds
+  } =
     getSearchBounds(activeSearch);
 
   return {
     totalPriceRange: totalPriceBounds,
     pricePerUnitRange: pricePerUnitBounds,
     deliveryDaysRange: deliveryBounds,
+    shippingFeeRange: shippingFeeBounds,
+    gstRange: gstBounds,
     minWorthItScore: 40,
+    minRating: 0,
+    minReviewCount: reviewCountBounds.min,
+    minSoldCount: soldCountBounds.min,
     minReturnWindowDays: 0,
     selectedSources: [],
     selectedOriginCountries: [],
@@ -69,23 +231,67 @@ function createFilters(activeSearch: SearchResponse): FiltersState {
     selectedWarrantyTypes: [],
     selectedAvailability: [],
     freeReturnsOnly: false,
-    localStockOnly: false
+    localStockOnly: false,
+    crossBorderOnly: false,
+    officialSellerOnly: false,
+    cheapestOnly: false,
+    highConfidenceOnly: false,
+    zeroImportFeesOnly: false,
+    fastLocalOnly: false
   };
 }
 
 function App() {
   const [page, setPage] = useState<PageView>("compare");
   const [catalog, setCatalog] = useState(marketplaceCatalog);
-  const [query, setQuery] = useState(marketplaceCatalog.queries[0].search_term);
+  const [queryInput, setQueryInput] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("lowest");
   const [selectedProduct, setSelectedProduct] = useState<ProductResult | null>(null);
   const [isCatalogLoading, setIsCatalogLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
-  const [searchStatus, setSearchStatus] = useState("Loading cached Tinyfish catalog...");
+  const [searchProgress, setSearchProgress] = useState(0);
+  const [searchStatus, setSearchStatus] = useState(
+    "Search a product to start comparing live listings."
+  );
   const [liveError, setLiveError] = useState<string | null>(null);
-
-  const deferredQuery = useDeferredValue(query);
-  const activeSearch = getBestSearchResponse(catalog.queries, deferredQuery);
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const searchAbortRef = useRef<AbortController | null>(null);
+  const autocompleteAbortRef = useRef<AbortController | null>(null);
+  const latestSearchRef = useRef("");
+  const catalogQueries = catalog.queries ?? [];
+  const engineContext =
+    catalog.engine_context ??
+    ({
+      target_market: "Singapore",
+      gst_rate_percent: 9,
+      landed_cost_formula: "((P x FX) + S + D) x (1 + GST)",
+      calculation_notes: [],
+      supported_origin_markets: preferredOriginMarkets,
+      supported_origin_currencies: preferredOriginCurrencies,
+      source_targets: {
+        retail: [],
+        travel: []
+      }
+    } satisfies MarketplaceCatalog["engine_context"]);
+  const hasActiveQuery = activeQuery.trim().length > 0;
+  const fallbackSearch = catalogQueries[0] ?? emptySearchResponse;
+  const activeSearch = hasActiveQuery
+    ? getCompositeSearchResponse(catalogQueries, activeQuery)
+    : fallbackSearch;
+  const mergedRetailTargets = Array.from(
+    new Map(
+      [...preferredRetailTargets, ...engineContext.source_targets.retail].map(
+        (target) => [target.name, target]
+      )
+    ).values()
+  );
+  const trackedSourceTargets = Array.from(
+    new Set([
+      ...mergedRetailTargets.map((target) => target.name),
+      ...engineContext.source_targets.travel.map((target) => target.name)
+    ])
+  ).length;
   const [filters, setFilters] = useState<FiltersState>(() => createFilters(activeSearch));
 
   useEffect(() => {
@@ -96,12 +302,40 @@ function App() {
     let cancelled = false;
 
     async function loadCatalog() {
+      const sessionCatalog = readSessionValue(SESSION_CATALOG_KEY);
+      const sessionActiveQuery = readSessionValue(SESSION_ACTIVE_QUERY_KEY);
+      const sessionQueryInput = readSessionValue(SESSION_QUERY_INPUT_KEY);
+
+      if (sessionCatalog) {
+        try {
+          const parsedCatalog = JSON.parse(sessionCatalog) as typeof marketplaceCatalog;
+
+          if (!cancelled) {
+            setCatalog(parsedCatalog);
+            if (sessionActiveQuery) {
+              setActiveQuery(sessionActiveQuery);
+            }
+            if (sessionQueryInput) {
+              setQueryInput(sessionQueryInput);
+            }
+            setSearchStatus("Loaded browser session cache. Syncing local catalog...");
+            setIsCatalogLoading(false);
+          }
+        } catch {
+          // ignore broken session cache and continue to file cache
+        }
+      }
+
       try {
         const nextCatalog = await fetchCatalog();
 
         if (!cancelled) {
           setCatalog(nextCatalog);
-          setSearchStatus("Loaded cached Tinyfish catalog.");
+          setSearchStatus(
+            sessionActiveQuery
+              ? "Loaded cached Tinyfish catalog."
+              : "Catalog ready. Search a product to start comparing live listings."
+          );
         }
       } catch (error) {
         if (!cancelled) {
@@ -125,73 +359,173 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const trimmedQuery = deferredQuery.trim();
+    writeSessionValue(SESSION_CATALOG_KEY, JSON.stringify(catalog));
+    writeSessionValue(SESSION_ACTIVE_QUERY_KEY, activeQuery);
+    writeSessionValue(SESSION_QUERY_INPUT_KEY, queryInput);
+  }, [activeQuery, catalog, queryInput]);
+
+  async function runSearch(nextRawQuery = queryInput) {
+    const trimmedQuery = nextRawQuery.trim();
 
     if (!trimmedQuery || isCatalogLoading) {
       return;
     }
 
-    if (getExactSearchResponse(catalog.queries, trimmedQuery)) {
+    autocompleteAbortRef.current?.abort();
+    setSuggestions([]);
+    latestSearchRef.current = trimmedQuery;
+    setActiveQuery(trimmedQuery);
+    setPage("compare");
+
+    const cachedMatch = getExactSearchResponse(catalog.queries, trimmedQuery);
+
+    if (cachedMatch) {
+      searchAbortRef.current?.abort();
+      searchAbortRef.current = null;
+      setIsSearching(false);
+      setSearchProgress(100);
       setLiveError(null);
+      setSearchStatus(`Loaded ${trimmedQuery} from local cache.`);
       return;
     }
 
-    let cancelled = false;
+    searchAbortRef.current?.abort();
+    const controller = new AbortController();
+    searchAbortRef.current = controller;
 
-    async function runSearch() {
-      try {
-        setIsSearching(true);
-        setLiveError(null);
-        setPage("compare");
-        setSearchStatus(
-          `Scanning ${catalog.engine_context.source_targets.retail.length} marketplaces for ${trimmedQuery}...`
-        );
+    try {
+      setIsSearching(true);
+      setSearchProgress(8);
+      setLiveError(null);
+      setSearchStatus(
+                        `Scanning ${mergedRetailTargets.length} marketplaces for ${trimmedQuery}...`
+      );
 
-        const payload = await searchCatalog(trimmedQuery);
+      const payload = await searchCatalog(trimmedQuery, controller.signal);
 
-        if (!cancelled) {
-          setCatalog(payload.catalog);
-          setSearchStatus(
-            payload.fromCache
-              ? `Loaded ${trimmedQuery} from cache.`
-              : `Cached ${payload.query.results.length} live listings for ${trimmedQuery}.`
-          );
-        }
-      } catch (error) {
-        if (!cancelled) {
-          setLiveError(
-            error instanceof Error ? error.message : "Tinyfish live search failed."
-          );
-          setSearchStatus("Search failed. Cached data is still available.");
-        }
-      } finally {
-        if (!cancelled) {
-          setIsSearching(false);
-        }
+      if (latestSearchRef.current !== trimmedQuery || controller.signal.aborted) {
+        return;
+      }
+
+      setCatalog(payload.catalog);
+      setSearchProgress(100);
+      setSearchStatus(
+        payload.fromCache
+          ? `Loaded ${trimmedQuery} from local cache.`
+          : `Cached ${payload.query.results.length} new listings for ${trimmedQuery}.`
+      );
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      setSearchProgress(0);
+      setLiveError(error instanceof Error ? error.message : "Tinyfish live search failed.");
+      setSearchStatus("Search failed. Local cached data is still available.");
+    } finally {
+      if (searchAbortRef.current === controller) {
+        searchAbortRef.current = null;
+      }
+
+      if (latestSearchRef.current === trimmedQuery) {
+        setIsSearching(false);
       }
     }
+  }
 
-    const timer = window.setTimeout(() => {
-      void runSearch();
-    }, 700);
+  useEffect(() => {
+    if (!isSearching) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setSearchProgress((current) => {
+        if (current >= 92) {
+          return current;
+        }
+
+        const nextStep = current < 35 ? 9 : current < 60 ? 6 : 3;
+        return Math.min(current + nextStep, 92);
+      });
+    }, 240);
 
     return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
+      window.clearInterval(timer);
     };
-  }, [catalog.engine_context.source_targets.retail.length, catalog.queries, deferredQuery, isCatalogLoading]);
+  }, [isSearching]);
 
-  const { totalPriceBounds, pricePerUnitBounds, deliveryBounds } =
+  useEffect(() => {
+    const trimmedQuery = queryInput.trim();
+
+    autocompleteAbortRef.current?.abort();
+
+    if (!trimmedQuery) {
+      setSuggestions([]);
+      return;
+    }
+
+    const localSuggestions = getLocalSuggestions(catalogQueries, trimmedQuery);
+    setSuggestions(localSuggestions);
+
+    const controller = new AbortController();
+    autocompleteAbortRef.current = controller;
+
+    void fetchAutocomplete(trimmedQuery, controller.signal)
+      .then((remoteSuggestions) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setSuggestions(mergeSuggestions(localSuggestions, remoteSuggestions));
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
+
+        setSuggestions(localSuggestions);
+      });
+
+    return () => {
+      controller.abort();
+    };
+  }, [catalogQueries, queryInput]);
+
+  useEffect(() => {
+    return () => {
+      searchAbortRef.current?.abort();
+      autocompleteAbortRef.current?.abort();
+    };
+  }, []);
+
+  const {
+    totalPriceBounds,
+    pricePerUnitBounds,
+    deliveryBounds,
+    shippingFeeBounds,
+    gstBounds,
+    reviewCountBounds,
+    soldCountBounds
+  } =
     getSearchBounds(activeSearch);
 
   const availableSources = Array.from(
-    new Set(activeSearch.results.map((result) => result.source))
+    new Set([
+      ...mergedRetailTargets.map((target) => target.name),
+      ...activeSearch.results.map((result) => result.source)
+    ])
   );
   const availableOriginCountries = Array.from(
-    new Set(activeSearch.results.map((result) => result.origin.country_of_origin))
+    new Set([
+      ...preferredOriginMarkets,
+      ...activeSearch.results.map((result) => result.origin.country_of_origin)
+    ])
   );
   const availableCurrencies = Array.from(
-    new Set(activeSearch.results.map((result) => result.origin.currency_of_origin))
+    new Set([
+      ...preferredOriginCurrencies,
+      ...activeSearch.results.map((result) => result.origin.currency_of_origin)
+    ])
   );
   const availableDeliveryOptions = Array.from(
     new Set(activeSearch.results.map((result) => result.fulfillment.delivery.option_label))
@@ -210,9 +544,9 @@ function App() {
     new Set(activeSearch.results.map((result) => result.fulfillment.availability.status))
   );
 
-  const filteredResults = activeSearch.results
+  const filteredResults = (hasActiveQuery ? activeSearch.results : [])
     .filter((result) => {
-      if (!matchesProductQuery(result, deferredQuery)) {
+      if (!matchesProductQuery(result, activeQuery)) {
         return false;
       }
 
@@ -240,7 +574,35 @@ function App() {
         return false;
       }
 
+      if (result.pricing.landed_sgd.shipping < filters.shippingFeeRange.min) {
+        return false;
+      }
+
+      if (result.pricing.landed_sgd.shipping > filters.shippingFeeRange.max) {
+        return false;
+      }
+
+      if (result.pricing.landed_sgd.gst < filters.gstRange.min) {
+        return false;
+      }
+
+      if (result.pricing.landed_sgd.gst > filters.gstRange.max) {
+        return false;
+      }
+
       if (result.comparison.worth_it_score < filters.minWorthItScore) {
+        return false;
+      }
+
+      if (result.metrics.rating_out_of_5 < filters.minRating) {
+        return false;
+      }
+
+      if (result.metrics.rating_count < filters.minReviewCount) {
+        return false;
+      }
+
+      if (result.metrics.sold_count < filters.minSoldCount) {
         return false;
       }
 
@@ -256,6 +618,49 @@ function App() {
       }
 
       if (filters.localStockOnly && !result.fulfillment.availability.local_stock) {
+        return false;
+      }
+
+      if (filters.crossBorderOnly && result.fulfillment.availability.local_stock) {
+        return false;
+      }
+
+      if (
+        filters.officialSellerOnly &&
+        !result.seller_badges.some((badge) => /official|mall|flagship/i.test(badge))
+      ) {
+        return false;
+      }
+
+      if (filters.cheapestOnly && !result.metrics.is_cheapest) {
+        return false;
+      }
+
+      if (
+        filters.highConfidenceOnly &&
+        !(
+          result.metrics.rating_out_of_5 >= 4.4 &&
+          result.metrics.rating_count >= 100 &&
+          result.metrics.sentiment_score >= 0.85
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        filters.zeroImportFeesOnly &&
+        (result.pricing.landed_sgd.gst > 0 || result.pricing.landed_sgd.customs_duty > 0)
+      ) {
+        return false;
+      }
+
+      if (
+        filters.fastLocalOnly &&
+        !(
+          result.fulfillment.availability.local_stock &&
+          result.fulfillment.delivery.max_days <= 3
+        )
+      ) {
         return false;
       }
 
@@ -374,6 +779,27 @@ function App() {
   const bestWorthIt = [...filteredResults].sort(
     (left, right) => right.comparison.worth_it_score - left.comparison.worth_it_score
   )[0];
+  const fastestLocal = [...filteredResults]
+    .filter((result) => result.fulfillment.availability.local_stock)
+    .sort(
+      (left, right) =>
+        left.fulfillment.delivery.max_days - right.fulfillment.delivery.max_days ||
+        left.pricing.landed_sgd.total - right.pricing.landed_sgd.total
+    )[0];
+  const highestConfidence = [...filteredResults].sort((left, right) => {
+    const leftConfidence =
+      (left.seller_badges.some((badge) => /official|mall|flagship/i.test(badge)) ? 2000 : 0) +
+      left.metrics.rating_out_of_5 * 1000 +
+      left.metrics.rating_count +
+      (left.fulfillment.commercial_terms.warranty_type === "Official" ? 500 : 0);
+    const rightConfidence =
+      (right.seller_badges.some((badge) => /official|mall|flagship/i.test(badge)) ? 2000 : 0) +
+      right.metrics.rating_out_of_5 * 1000 +
+      right.metrics.rating_count +
+      (right.fulfillment.commercial_terms.warranty_type === "Official" ? 500 : 0);
+
+    return rightConfidence - leftConfidence;
+  })[0];
   const averageSentiment =
     filteredResults.reduce((sum, result) => sum + result.metrics.sentiment_score, 0) /
     (filteredResults.length || 1);
@@ -403,17 +829,30 @@ function App() {
     2
   );
 
-  const trackedSourceTargets =
-    catalog.engine_context.source_targets.retail.length +
-    catalog.engine_context.source_targets.travel.length;
+  const supportedOriginMarkets = Array.from(
+    new Set([
+      ...preferredOriginMarkets,
+      ...(engineContext.supported_origin_markets || [])
+    ])
+  );
+  const supportedOriginCurrencies = Array.from(
+    new Set([
+      ...preferredOriginCurrencies,
+      ...(engineContext.supported_origin_currencies || []),
+      ...catalogQueries.flatMap((query) =>
+        query.results.map((result) => result.origin.currency_of_origin)
+      )
+    ])
+  );
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#09161b] text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(240,186,109,0.18),_transparent_28%),radial-gradient(circle_at_85%_10%,_rgba(77,179,171,0.14),_transparent_24%),radial-gradient(circle_at_50%_100%,_rgba(110,216,208,0.12),_transparent_26%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-[#071116] text-white">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(240,186,109,0.2),_transparent_28%),radial-gradient(circle_at_88%_10%,_rgba(77,179,171,0.16),_transparent_24%),radial-gradient(circle_at_50%_100%,_rgba(110,216,208,0.12),_transparent_26%),linear-gradient(180deg,_rgba(255,255,255,0.02),_rgba(255,255,255,0))]" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:36px_36px]" />
 
-      <div className="relative mx-auto max-w-[1580px] px-4 py-5 sm:px-6 lg:px-8">
-        <section className="overflow-hidden rounded-[42px] border border-white/10 bg-[linear-gradient(180deg,_rgba(255,255,255,0.05),_rgba(255,255,255,0.02))] p-5 shadow-[0_24px_90px_rgba(4,8,10,0.28)] sm:p-8">
-          <header className="rounded-[34px] border border-white/10 bg-[#0f2027]/80 p-5 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl sm:p-7">
+      <div className="relative mx-auto max-w-[1720px] px-3 py-3 sm:px-5 lg:px-6">
+        <section className="overflow-hidden rounded-[38px] border border-white/10 bg-[linear-gradient(180deg,_rgba(255,255,255,0.05),_rgba(255,255,255,0.02))] p-4 shadow-[0_24px_90px_rgba(4,8,10,0.28)] sm:p-5">
+          <header className="rounded-[30px] border border-white/10 bg-[#0d1b21]/84 p-4 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl sm:p-6">
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div className="max-w-3xl">
                 <p className="text-xs uppercase tracking-[0.32em] text-white/45">
@@ -456,16 +895,38 @@ function App() {
               </nav>
             </div>
 
-            <div className="mt-6 grid gap-6 xl:grid-cols-[1.18fr_0.82fr]">
+            <div className="mt-5 grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
               <div className="space-y-5">
                 <SearchBar
-                  query={query}
-                  onQueryChange={setQuery}
+                  query={queryInput}
+                  onQueryChange={setQueryInput}
+                  suggestions={suggestions}
+                  onSuggestionSelect={(value) => {
+                    setQueryInput(value);
+                    void runSearch(value);
+                  }}
+                  onBlurSubmit={() => {
+                    void runSearch();
+                  }}
+                  onSubmit={() => {
+                    void runSearch();
+                  }}
                   isLoading={isCatalogLoading || isSearching}
                 />
 
                 <div className="rounded-[24px] border border-white/10 bg-black/16 px-4 py-3 text-sm text-white/68">
-                  {searchStatus}
+                  <div className="flex items-center justify-between gap-3">
+                    <span>{searchStatus}</span>
+                    <span className="text-xs uppercase tracking-[0.18em] text-white/42">
+                      {isSearching ? `${searchProgress}%` : "Ready"}
+                    </span>
+                  </div>
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/8">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-[#f0ba6d] via-[#f8d89d] to-[#6fd7d0] transition-[width] duration-300"
+                      style={{ width: `${isSearching ? searchProgress : 100}%` }}
+                    />
+                  </div>
                 </div>
 
                 {liveError ? (
@@ -473,77 +934,73 @@ function App() {
                     {liveError}
                   </div>
                 ) : null}
-
-                <div className="flex flex-wrap gap-3">
-                  <span className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                    Current query {activeSearch.search_term}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                    Category {activeSearch.category}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                    Region {catalog.engine_context.target_market}
-                  </span>
-                  <span className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                    Cached links {activeSearch.results.length}
-                  </span>
-                </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-[28px] border border-white/10 bg-black/16 p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
-                    Best visible price
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {bestPrice
-                      ? sgdFormatter.format(bestPrice.pricing.landed_sgd.total)
-                      : "No match"}
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Cheapest landed result in the current compare view.
-                  </p>
-                </div>
-                <div className="rounded-[28px] border border-white/10 bg-black/16 p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
-                    Best worth-it
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {bestWorthIt ? formatWorthIt(bestWorthIt.comparison.worth_it_score) : "N/A"}
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Highest blended value score after filters.
-                  </p>
-                </div>
-                <div className="rounded-[28px] border border-white/10 bg-black/16 p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
-                    Avg. sentiment
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {formatSentiment(averageSentiment)}
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Review-quality signal across visible offers.
-                  </p>
-                </div>
-                <div className="rounded-[28px] border border-white/10 bg-black/16 p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">
-                    Tracked sources
-                  </p>
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {trackedSourceTargets}
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Cached retail and travel targets in the engine layer.
-                  </p>
+              <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(160deg,_rgba(255,255,255,0.06),_rgba(255,255,255,0.02))] p-5 shadow-[0_18px_50px_rgba(6,12,15,0.22)]">
+                <p className="text-xs uppercase tracking-[0.28em] text-white/45">
+                  Market pulse
+                </p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">
+                  Live compare signal
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-white/62">
+                  A tighter read on the current search with progress, price spread,
+                  recommendation quality, and coverage across active sources.
+                </p>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-[22px] border border-white/10 bg-black/16 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                      Query focus
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">
+                      {activeSearch.search_term}
+                    </p>
+                    <p className="mt-1 text-xs text-white/55">
+                      {activeSearch.category} in {engineContext.target_market}
+                    </p>
+                  </div>
+                  <div className="rounded-[22px] border border-white/10 bg-black/16 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                      Update progress
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">
+                      {isSearching ? `${searchProgress}%` : "Ready"}
+                    </p>
+                    <p className="mt-1 text-xs text-white/55">
+                      {activeSearch.results.length} cached listings in view
+                    </p>
+                  </div>
+                  <div className="rounded-[22px] border border-white/10 bg-black/16 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                      Price spread
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">
+                      {sgdFormatter.format(priceFloor)} - {sgdFormatter.format(priceCeiling)}
+                    </p>
+                    <p className="mt-1 text-xs text-white/55">
+                      Current visible landed-price range
+                    </p>
+                  </div>
+                  <div className="rounded-[22px] border border-white/10 bg-black/16 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                      Local confidence
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-white">
+                      {localStockCount} local-ready
+                    </p>
+                    <p className="mt-1 text-xs text-white/55">
+                      {trackedSourceTargets} tracked sources, {formatSentiment(averageSentiment)} sentiment
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </header>
 
           {page === "compare" ? (
-            <div className="mt-6 grid gap-6 xl:grid-cols-[330px_minmax(0,1fr)]">
-              <div className="self-start xl:sticky xl:top-6">
+            <div className="mt-5 grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+              <div className="self-start xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:overflow-auto xl:pr-1">
                 <FilterSidebar
                   filters={filters}
                   defaults={createFilters(activeSearch)}
@@ -551,6 +1008,10 @@ function App() {
                   totalPriceBounds={totalPriceBounds}
                   pricePerUnitBounds={pricePerUnitBounds}
                   deliveryBounds={deliveryBounds}
+                  shippingFeeBounds={shippingFeeBounds}
+                  gstBounds={gstBounds}
+                  reviewCountBounds={reviewCountBounds}
+                  soldCountBounds={soldCountBounds}
                   availableSources={availableSources}
                   availableOriginCountries={availableOriginCountries}
                   availableCurrencies={availableCurrencies}
@@ -564,6 +1025,60 @@ function App() {
               </div>
 
               <main className="space-y-6">
+                {!hasActiveQuery ? (
+                  <section className="overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(140deg,_rgba(240,186,109,0.1),_rgba(77,179,171,0.08),_rgba(255,255,255,0.03))] p-8 shadow-[0_18px_60px_rgba(6,12,15,0.2)]">
+                    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.28em] text-white/45">
+                          Start with a live search
+                        </p>
+                        <h2 className="mt-3 text-3xl font-semibold text-white">
+                          Search a real product and Tinyfish will build a fresh comparison set.
+                        </h2>
+                        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/64">
+                          Enter a model number, brand plus product name, or a precise variant
+                          like storage size or capacity. Press Enter or leave the field to run
+                          the search and update the listing matrix.
+                        </p>
+                        <div className="mt-5 flex flex-wrap gap-2">
+                          {preferredRetailTargets.slice(0, 10).map((target) => (
+                            <span
+                              key={target.name}
+                              className="rounded-full border border-white/10 bg-black/12 px-3 py-2 text-xs uppercase tracking-[0.18em] text-white/68"
+                            >
+                              {target.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-[24px] border border-white/10 bg-black/18 p-5">
+                          <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                            Sources ready
+                          </p>
+                          <p className="mt-3 text-3xl font-semibold text-white">
+                            {trackedSourceTargets}
+                          </p>
+                          <p className="mt-2 text-sm text-white/55">
+                            Retail and adjacent search targets configured.
+                          </p>
+                        </div>
+                        <div className="rounded-[24px] border border-white/10 bg-black/18 p-5">
+                          <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                            Origin coverage
+                          </p>
+                          <p className="mt-3 text-3xl font-semibold text-white">
+                            {supportedOriginMarkets.length}
+                          </p>
+                          <p className="mt-2 text-sm text-white/55">
+                            Markets ready for filter coverage and imports.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
+
                 {bestWorthIt ? (
                   <section className="overflow-hidden rounded-[34px] border border-white/10 bg-[linear-gradient(135deg,_rgba(240,186,109,0.12),_rgba(77,179,171,0.1))] shadow-[0_18px_60px_rgba(6,12,15,0.2)]">
                     <div className="grid gap-0 lg:grid-cols-[0.78fr_1.22fr]">
@@ -581,6 +1096,23 @@ function App() {
                           <span className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
                             Top recommendation
                           </span>
+                          <span className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                            Query {activeSearch.search_term}
+                          </span>
+                          <span className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                            Category {activeSearch.category}
+                          </span>
+                          <span className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                            Region {engineContext.target_market}
+                          </span>
+                          <span className="rounded-full border border-white/10 bg-black/18 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/70">
+                            Cached links {activeSearch.results.length}
+                          </span>
+                          {isSearching ? (
+                            <span className="rounded-full border border-[#f0ba6d]/28 bg-[#f0ba6d]/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-[#f7dfb0]">
+                              Updating {searchProgress}%
+                            </span>
+                          ) : null}
                           <span className="rounded-full border border-[#4db3ab]/28 bg-[#4db3ab]/12 px-3 py-1 text-xs uppercase tracking-[0.2em] text-[#b8f7ef]">
                             Origin {bestWorthIt.origin.country_of_origin}
                           </span>
@@ -593,9 +1125,33 @@ function App() {
                           <p className="mt-3 max-w-3xl text-sm leading-7 text-white/66">
                             {bestWorthIt.comparison.rationale_summary}
                           </p>
+                          {isSearching ? (
+                            <div className="mt-4">
+                              <div className="flex items-center justify-between text-xs uppercase tracking-[0.18em] text-white/48">
+                                <span>Refreshing listings</span>
+                                <span>{searchProgress}%</span>
+                              </div>
+                              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/8">
+                                <div
+                                  className="h-full rounded-full bg-gradient-to-r from-[#f0ba6d] to-[#6fd7d0] transition-[width] duration-300"
+                                  style={{ width: `${searchProgress}%` }}
+                                />
+                              </div>
+                            </div>
+                          ) : null}
                         </div>
 
-                        <div className="grid gap-3 sm:grid-cols-3">
+                        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-4">
+                          <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                              Best visible price
+                            </p>
+                            <p className="mt-2 text-2xl font-semibold text-white">
+                              {bestPrice
+                                ? sgdFormatter.format(bestPrice.pricing.landed_sgd.total)
+                                : "No match"}
+                            </p>
+                          </div>
                           <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
                             <p className="text-xs uppercase tracking-[0.18em] text-white/45">
                               Worth it
@@ -613,6 +1169,47 @@ function App() {
                                 bestWorthIt.fulfillment.delivery.min_days,
                                 bestWorthIt.fulfillment.delivery.max_days
                               )}
+                            </p>
+                          </div>
+                          <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                              Avg. sentiment
+                            </p>
+                            <p className="mt-2 text-2xl font-semibold text-white">
+                              {formatSentiment(averageSentiment)}
+                            </p>
+                          </div>
+                          <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                              Tracked sources
+                            </p>
+                            <p className="mt-2 text-2xl font-semibold text-white">
+                              {trackedSourceTargets}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-3">
+                          <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                              Origin
+                            </p>
+                            <p className="mt-2 text-lg font-semibold text-white">
+                              {bestWorthIt.origin.country_of_origin}
+                            </p>
+                            <p className="mt-1 text-xs text-white/55">
+                              Ships from {bestWorthIt.fulfillment.ships_from_country}
+                            </p>
+                          </div>
+                          <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
+                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                              Currency
+                            </p>
+                            <p className="mt-2 text-lg font-semibold text-white">
+                              {bestWorthIt.origin.currency_of_origin}
+                            </p>
+                            <p className="mt-1 text-xs text-white/55">
+                              Original {bestWorthIt.pricing.original.currency}
                             </p>
                           </div>
                           <div className="rounded-[22px] border border-white/10 bg-black/18 p-4">
@@ -645,6 +1242,61 @@ function App() {
                   </section>
                 ) : null}
 
+                {hasActiveQuery ? (
+                  <section className="grid gap-4 xl:grid-cols-3">
+                    {[
+                      {
+                        label: "Cheapest landed",
+                        product: bestPrice,
+                        detail: bestPrice
+                          ? sgdFormatter.format(bestPrice.pricing.landed_sgd.total)
+                          : "No match"
+                      },
+                      {
+                        label: "Fastest local",
+                        product: fastestLocal,
+                        detail: fastestLocal
+                          ? formatDeliveryRange(
+                              fastestLocal.fulfillment.delivery.min_days,
+                              fastestLocal.fulfillment.delivery.max_days
+                            )
+                          : "No local option"
+                      },
+                      {
+                        label: "Highest confidence",
+                        product: highestConfidence,
+                        detail: highestConfidence
+                          ? `${highestConfidence.metrics.rating_out_of_5.toFixed(1)}/5`
+                          : "No match"
+                      }
+                    ].map((card) => (
+                      <button
+                        key={card.label}
+                        type="button"
+                        disabled={!card.product}
+                        onClick={() => {
+                          if (card.product) {
+                            setSelectedProduct(card.product);
+                          }
+                        }}
+                        className="rounded-[28px] border border-white/10 bg-[#0c1c22]/84 p-5 text-left shadow-[0_18px_60px_rgba(6,12,15,0.18)] transition hover:border-white/20 disabled:cursor-default"
+                      >
+                        <p className="text-xs uppercase tracking-[0.2em] text-white/45">
+                          {card.label}
+                        </p>
+                        <p className="mt-3 text-2xl font-semibold text-white">
+                          {card.product?.product_name ?? "No listing"}
+                        </p>
+                        <p className="mt-2 text-sm text-white/62">{card.detail}</p>
+                        <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[#f7dfb0]">
+                          {card.product ? "Open details" : "Adjust filters"}
+                        </p>
+                      </button>
+                    ))}
+                  </section>
+                ) : null}
+
+                {hasActiveQuery ? (
                 <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
                   <div className="rounded-[32px] border border-white/10 bg-[#0c1c22]/84 p-6 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl">
                     <p className="text-xs uppercase tracking-[0.3em] text-white/45">
@@ -717,8 +1369,9 @@ function App() {
                     </div>
                   </div>
                 </section>
+                ) : null}
 
-                {isSearching ? (
+                {isSearching && hasActiveQuery ? (
                   <section className="rounded-[32px] border border-white/10 bg-[#0c1c22]/84 p-6 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
@@ -726,7 +1379,7 @@ function App() {
                           Live Tinyfish search
                         </p>
                         <h2 className="mt-2 text-2xl font-semibold text-white">
-                          Building fresh cache for {deferredQuery.trim() || query}
+                          Building fresh cache for {activeQuery}
                         </h2>
                         <p className="mt-3 text-sm leading-7 text-white/62">
                           Waiting for marketplace runs to finish across all configured
@@ -741,8 +1394,9 @@ function App() {
                   </section>
                 ) : null}
 
-                <section className="rounded-[32px] border border-white/10 bg-[#0c1c22]/84 p-5 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl sm:p-7">
-                  <div className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
+                {hasActiveQuery ? (
+                <section className="rounded-[30px] border border-white/10 bg-[#0b1a20]/88 p-4 shadow-[0_18px_60px_rgba(6,12,15,0.22)] backdrop-blur-xl sm:p-5">
+                  <div className="flex flex-col gap-4 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-white/45">
                         Result matrix
@@ -751,20 +1405,23 @@ function App() {
                         Ranked offers
                       </h2>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                      <div className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
+                    <div className="flex flex-wrap gap-2">
+                      <div className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/68">
+                        {filteredResults.length} visible
+                      </div>
+                      <div className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/68">
                         Sort {sortBy.replace("_", " ")}
                       </div>
-                      <div className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                        Live links enabled
+                      <div className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/68">
+                        Avg. delivery {avgDeliveryMax}d
                       </div>
-                      <div className="rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm text-white/68">
-                        Media cache ready
+                      <div className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/68">
+                        Live links enabled
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-6 grid gap-4 xl:grid-cols-2 2xl:grid-cols-3">
+                  <div className="mt-4 grid gap-4 xl:grid-cols-2 2xl:grid-cols-2 3xl:grid-cols-3">
                     {filteredResults.map((product) => (
                       <ProductCard
                         key={product.listing_id}
@@ -786,6 +1443,7 @@ function App() {
                     </div>
                   ) : null}
                 </section>
+                ) : null}
               </main>
             </div>
           ) : null}
@@ -1002,6 +1660,32 @@ function App() {
                         </div>
                       </div>
                       <div>
+                        <p className="text-sm font-medium text-white">Origin markets</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {supportedOriginMarkets.map((value) => (
+                            <span
+                              key={value}
+                              className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/66"
+                            >
+                              {value}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">Origin currencies</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {supportedOriginCurrencies.map((value) => (
+                            <span
+                              key={value}
+                              className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/66"
+                            >
+                              {value}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
                         <p className="text-sm font-medium text-white">Delivery options</p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {availableDeliveryOptions.map((value) => (
@@ -1033,11 +1717,11 @@ function App() {
                   </h2>
                   <div className="mt-4 rounded-[24px] border border-[#f0ba6d]/18 bg-[#f0ba6d]/10 p-4">
                     <p className="font-mono text-sm text-[#f6d7a5]">
-                      {catalog.engine_context.landed_cost_formula}
+                      {engineContext.landed_cost_formula}
                     </p>
                   </div>
                   <ul className="mt-5 space-y-3 text-sm text-white/66">
-                    {catalog.engine_context.calculation_notes.map((note) => (
+                    {engineContext.calculation_notes.map((note) => (
                       <li key={note}>{note}</li>
                     ))}
                   </ul>
@@ -1049,7 +1733,7 @@ function App() {
                       GST modeled
                     </p>
                     <p className="mt-3 text-3xl font-semibold text-white">
-                      {catalog.engine_context.gst_rate_percent}%
+                      {engineContext.gst_rate_percent}%
                     </p>
                     <p className="mt-2 text-sm text-white/55">
                       Singapore low-value goods logic in the current engine.
@@ -1060,10 +1744,21 @@ function App() {
                       Supported origins
                     </p>
                     <p className="mt-3 text-3xl font-semibold text-white">
-                      {catalog.engine_context.supported_origin_markets.length}
+                      {supportedOriginMarkets.length}
                     </p>
                     <p className="mt-2 text-sm text-white/55">
                       Cached market codes available for future endpoint expansion.
+                    </p>
+                  </div>
+                  <div className="rounded-[28px] border border-white/10 bg-[#0c1c22]/84 p-5">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/45">
+                      Supported currencies
+                    </p>
+                    <p className="mt-3 text-3xl font-semibold text-white">
+                      {supportedOriginCurrencies.length}
+                    </p>
+                    <p className="mt-2 text-sm text-white/55">
+                      Currency coverage for the target origin markets.
                     </p>
                   </div>
                   <div className="rounded-[28px] border border-white/10 bg-[#0c1c22]/84 p-5 sm:col-span-2">
@@ -1071,12 +1766,27 @@ function App() {
                       Origin coverage map
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
-                      {catalog.engine_context.supported_origin_markets.map((market) => (
+                      {supportedOriginMarkets.map((market) => (
                         <span
                           key={market}
                           className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/66"
                         >
                           {market}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-[28px] border border-white/10 bg-[#0c1c22]/84 p-5 sm:col-span-2">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/45">
+                      Currency coverage map
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {supportedOriginCurrencies.map((currency) => (
+                        <span
+                          key={currency}
+                          className="rounded-full border border-white/10 bg-white/4 px-3 py-2 text-sm text-white/66"
+                        >
+                          {currency}
                         </span>
                       ))}
                     </div>
@@ -1093,7 +1803,7 @@ function App() {
                     Singapore-first marketplace targets
                   </h2>
                   <div className="mt-5 grid gap-3">
-                    {catalog.engine_context.source_targets.retail.map((target) => (
+                    {mergedRetailTargets.map((target) => (
                       <a
                         key={target.name}
                         href={target.url}
@@ -1130,7 +1840,7 @@ function App() {
                       Adjacent search surfaces
                     </h2>
                     <div className="mt-5 grid gap-3">
-                      {catalog.engine_context.source_targets.travel.map((target) => (
+                      {engineContext.source_targets.travel.map((target) => (
                         <a
                           key={target.name}
                           href={target.url}

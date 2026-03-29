@@ -19,8 +19,19 @@ npm install
 npm run dev
 ```
 
+## Environment
+
+Use a local `.env.local` file for development:
+
+```bash
+TINYFISH_API_KEY=your-tinyfish-api-key
+BLOB_READ_WRITE_TOKEN=your-vercel-blob-read-write-token
+```
+
 ## Notes
 
 - The UI is currently wired to the richer JSON catalog at `src/data/mockCatalog.json` through `src/data/mockResults.ts`.
 - The catalog now includes landed-cost engine context, retail/travel source targets, origin metadata, delivery timing bands, price-per-unit signals, and worth-it scoring.
 - The current mock queries are retail-focused, but the schema now leaves room for future extensions to travel and booking comparisons.
+- Tinyfish search results are cached into the local JSON catalog during local development, and can also mirror into Vercel Blob when `BLOB_READ_WRITE_TOKEN` is configured.
+- Broad family queries such as `iphone`, `ipad`, or `anker` can now return a wider mix of relevant variants instead of only one exact SKU.

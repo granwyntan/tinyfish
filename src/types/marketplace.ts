@@ -128,6 +128,7 @@ export interface LandedCostEngineContext {
   landed_cost_formula: string;
   calculation_notes: string[];
   supported_origin_markets: string[];
+  supported_origin_currencies?: string[];
   source_targets: {
     retail: SourceTarget[];
     travel: SourceTarget[];
@@ -154,11 +155,22 @@ export interface MarketplaceCatalog {
   queries: SearchResponse[];
 }
 
+export interface SearchSuggestion {
+  value: string;
+  subtitle: string;
+  kind: "family" | "query" | "alias" | "listing";
+}
+
 export interface FiltersState {
   totalPriceRange: RangeFilter;
   pricePerUnitRange: RangeFilter;
   deliveryDaysRange: RangeFilter;
+  shippingFeeRange: RangeFilter;
+  gstRange: RangeFilter;
   minWorthItScore: number;
+  minRating: number;
+  minReviewCount: number;
+  minSoldCount: number;
   minReturnWindowDays: number;
   selectedSources: string[];
   selectedOriginCountries: string[];
@@ -169,4 +181,10 @@ export interface FiltersState {
   selectedAvailability: string[];
   freeReturnsOnly: boolean;
   localStockOnly: boolean;
+  crossBorderOnly: boolean;
+  officialSellerOnly: boolean;
+  cheapestOnly: boolean;
+  highConfidenceOnly: boolean;
+  zeroImportFeesOnly: boolean;
+  fastLocalOnly: boolean;
 }
